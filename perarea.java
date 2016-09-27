@@ -33,18 +33,19 @@ public class perarea
 	
 	public static void main (String args[]) 
 	{
+		double a,b,area,peri;
 		Scanner sca = new Scanner(System.in);
 		System.out.print("Insira o comprimento:");
-		double a = sca.nextDouble();
+		a = sca.nextDouble();
 		System.out.print("Insira a largura:");
-		double b = sca.nextDouble();
+		b = sca.nextDouble();
 		
 		// Calcular c*l e 2(c+l)
 		
-		double area = a*b;
-		double peri = 2*(a+b);
+		area = a*b;
+		peri = 2*(a+b);
 		
-		System.out.printf("Área: %f u.a.\nComprimento: %f u.c.", area, peri);
+		System.out.printf("Área: %f u.a.\nComprimento: %f u.c.\n", area, peri);
 		
 		
 		
