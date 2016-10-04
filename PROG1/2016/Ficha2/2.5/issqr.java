@@ -47,12 +47,28 @@ public class issqr
 		System.out.print("P4:");
 		x[3] = sca.nextDouble();
 		y[3] = sca.nextDouble();
-		
+		double theta;
 		//D(P1,P2) = D(P2,P3) = D(P3,P4) = D(P4,P1) --> Quadrado
 		if (pdist(x[0],y[0],x[1],y[1]) == pdist(x[1],y[1],x[2],y[2]) && pdist(x[1],y[1],x[2],y[2]) == pdist(x[2],y[2],x[3],y[3]) && pdist(x[2],y[2],x[3],y[3]) == pdist(x[3],y[3],x[0],y[0]))
 		{
-			//É quadrado
-			choi = sim;	
+			//Confirmar a existência de um ângulo recto (se sim, será um quadrado)
+			
+			//Vector AB = B - A
+			//Através do produto escalar, verificar a amplitude do ângulo
+			double[] AB = {x[1] - x[0], y[1] - y[0]}, BC = {x[2] - x[1], y[2] - y[1]}; //Vectores
+			double dAB = pdist(x[0],y[0],x[1],y[1]); //Comprimento de AB (e BC)
+			double pABBC = AB[0]*BC[0] + AB[1]*BC[1]; //Produto escalar AB * BC
+			//Ângulo
+			double thetarad = Math.acos(pABBC/(dAB*dAB)); // Ângulo em radianos
+			theta = (thetarad * 180) / Math.PI; //Graus
+			if (theta == 90.0)
+			{
+				choi = sim;
+			}
+			else
+			{
+				choi = nao;
+			}
 		}
 		else
 		{
