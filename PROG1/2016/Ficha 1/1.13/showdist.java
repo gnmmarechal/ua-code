@@ -1,5 +1,5 @@
 /*
- * isprime.java
+ * showdist.java
  * 
  * Copyright 2016 Mário Alexandre Lopes Liberato <mliberato@ua.pt>
  * 
@@ -21,35 +21,28 @@
  * 
  */
 import java.util.*;
+import java.lang.*;
 
-public class isprime 
+public class showdist 
 {
-	public static boolean primecheck (int arg)
+	public static double distcalc(double x1p, double y1p, double x2p, double y2p, double sc)
 	{
-		//Verificação de primo
-		if(arg==1) return false; //1 não é considerado primo
-		for (int i = 2;2*i<arg;i++)
-		{
-			if(arg%i==0) return false;
-		}
-		return true;
+		double x1 = x1p*sc, x2 = x2p*sc, y1 = y1p*sc, y2 = y2p*sc;
+		return Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
 	}
 	public static void main (String args[]) 
 	{
 		Scanner sca = new Scanner(System.in);
-		int inp;
-		String msg="", tmsg = "O número é primo.", fmsg = "O número não é primo.";
-		System.out.printf("Insira um número:\n>");
-		inp = sca.nextInt();
-		if(primecheck(inp))
-		{
-			msg = tmsg;
-		}
-		else
-		{
-			msg = fmsg;
-		}
-		System.out.println(msg);
+		double[] input = {0,0,0,0}; //Coordenadas
+		double scalefactor = 100000; //O factor de escala é inserido em cm:cm.
+		double scalefactorshrt = scalefactor/1000; //Converte o factor para cm:Km.
+		System.out.printf("Escala: 1/%f (cm:Km)\nInsira as coordenadas (x1, y1):\n>", scalefactorshrt);
+		input[0] = sca.nextDouble();
+		input[1] = sca.nextDouble();
+		System.out.printf("Insira as coordenadas (x2, y2):\n>");
+		input[2] = sca.nextDouble();
+		input[3] = sca.nextDouble();
+		System.out.printf("A distância entre os pontos é %fKm.", distcalc(input[0], input[1], input[2], input[3],scalefactorshrt));
 	}
 }
 

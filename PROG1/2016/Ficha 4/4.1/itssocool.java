@@ -1,5 +1,5 @@
 /*
- * isprime.java
+ * itssocool.java
  * 
  * Copyright 2016 Mário Alexandre Lopes Liberato <mliberato@ua.pt>
  * 
@@ -22,34 +22,34 @@
  */
 import java.util.*;
 
-public class isprime 
+public class itssocool 
 {
-	public static boolean primecheck (int arg)
+	static boolean isValid(int value)
 	{
-		//Verificação de primo
-		if(arg==1) return false; //1 não é considerado primo
-		for (int i = 2;2*i<arg;i++)
-		{
-			if(arg%i==0) return false;
-		}
-		return true;
+		return (value>0); 
 	}
+	
 	public static void main (String args[]) 
 	{
 		Scanner sca = new Scanner(System.in);
-		int inp;
-		String msg="", tmsg = "O número é primo.", fmsg = "O número não é primo.";
-		System.out.printf("Insira um número:\n>");
-		inp = sca.nextInt();
-		if(primecheck(inp))
+		String out = "", socool = "P1 é fixe!", sunova = "Input inválido.";
+		//Input
+		System.out.printf("Insira um número!\n>");
+		int timestoprint = sca.nextInt();
+		if (isValid(timestoprint))
 		{
-			msg = tmsg;
+			out = socool;
 		}
 		else
 		{
-			msg = fmsg;
+			timestoprint = 1;
+			out = sunova;
 		}
-		System.out.println(msg);
+		do
+		{
+			System.out.println(out);
+			timestoprint--;
+		} while(timestoprint>0);
 	}
 }
-
+//El Psy Congroo

@@ -1,5 +1,5 @@
 /*
- * isprime.java
+ * tabuada.java
  * 
  * Copyright 2016 Mário Alexandre Lopes Liberato <mliberato@ua.pt>
  * 
@@ -22,34 +22,48 @@
  */
 import java.util.*;
 
-public class isprime 
+public class tabuada 
 {
-	public static boolean primecheck (int arg)
+	static boolean checkValid(int n)
 	{
-		//Verificação de primo
-		if(arg==1) return false; //1 não é considerado primo
-		for (int i = 2;2*i<arg;i++)
-		{
-			if(arg%i==0) return false;
-		}
-		return true;
+		return (n>0 && n<100);
 	}
+	static void printTab(int n)
+	{
+		String bar = "--------------------";
+		
+		//Head
+		System.out.printf(bar + "\n|  Tabuada dos %02d  |\n" + bar, n);
+		
+		//Body
+		int count = 1;
+		do
+		{
+			System.out.printf("\n| %02d x  %d  |  %03d  |", n, count, n*count);
+			count++;
+		} while(count<10);
+		System.out.printf("\n| %02d x %d  |  %03d  |\n", n, count, n*count);
+		//Footer
+		System.out.println(bar);
+	}
+	
 	public static void main (String args[]) 
 	{
 		Scanner sca = new Scanner(System.in);
-		int inp;
-		String msg="", tmsg = "O número é primo.", fmsg = "O número não é primo.";
-		System.out.printf("Insira um número:\n>");
-		inp = sca.nextInt();
-		if(primecheck(inp))
+
+		
+		System.out.printf("Insira um número inteiro maior que 0 e menor que 100:\n>");
+		int input = sca.nextInt();
+		if(checkValid(input))
 		{
-			msg = tmsg;
+			printTab(input);
+			return;
 		}
 		else
 		{
-			msg = fmsg;
+			System.out.println("Erro. Input inválido.");
+			return;
 		}
-		System.out.println(msg);
 	}
 }
 
