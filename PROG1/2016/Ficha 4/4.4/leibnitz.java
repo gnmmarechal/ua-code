@@ -27,11 +27,9 @@ public class leibnitz
 	static double seriesCalcSum(int n)
 	{
 		double total = 0;
-		for (int i=1; i<n; i++)
-		{
-			double el = Math.pow(-1,i+1) / (2*i + 1);
-			total += el;
-		}
+		boolean pos = true;
+		
+		
 		return total;
 	}
 	
