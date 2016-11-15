@@ -20,22 +20,45 @@
  * 
  * 
  */
-
+import java.util.*;
 
 public class leibnitz 
 {
 	static double seriesCalcSum(int n)
 	{
-		double total = 0;
-		boolean pos = true;
+		double total = 0, sign = 1.0 ;
+		for(int i =1;i<=n;i+=2)
+			{
+				total += sign/i;
+				sign *= -1;
+			}		
 		
 		
 		return total;
 	}
+	static String compNum(double a, double b)
+	{
+		String ma = "maior que", eq = "igual a", men = "menor que";
+		if(a>b)
+		{
+			return ma;
+		}
+		else if(b<a)
+		{
+			return men;
+		}	
+		else return eq;
+	}
 	
 	public static void main (String args[]) 
 	{
-		System.out.print(seriesCalcSum(10000000)*4);
+		double piforth = Math.PI/4;
+		Scanner sca = new Scanner(System.in);
+		System.out.printf("Insira um valor N:\n>");
+		int input = sca.nextInt();
+		double calcn = seriesCalcSum(input);
+		System.out.printf("Valor obtido : %.015f\nValor de PI/4 : %.015f\nO valor calculado é " + compNum(calcn, piforth) + " PI/4\n", calcn, piforth); //O símbolo π (e símbolos como é ou è) parece não ser mostrado quando o programa é executado. Este comportamento foi verificado em Windows, e com ambos o símbolo e a representação \u03C0. 
+		//Para determinados valores, apesar de calcn != piforth, o programa considera-os iguais?
 	}
 }
 
