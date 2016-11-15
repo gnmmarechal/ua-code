@@ -44,9 +44,8 @@ public class printFile
 		{
 			Scanner fileScan = new Scanner(inpFile);
 			while(fileScan.hasNextLine())
-				toPrint += fileScan.nextLine() + "\n";
+				System.out.println(fileScan.nextLine());
 		}
-		System.out.printf(toPrint);
 	}
 }
 
