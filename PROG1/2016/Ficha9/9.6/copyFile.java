@@ -25,7 +25,7 @@ import java.util.*;
 
 public class copyFile
 {
-	
+	static Scanner sca = new Scanner(System.in);
 	public static void main (String args[]) throws IOException
 	{
 		if (args.length == 2)
@@ -35,10 +35,10 @@ public class copyFile
 			File fileA = new File(filenameA);
 			File fileB = new File(filenameB);
 			
-			if(fileExists(fileA) && !fileExists(fileB))
+			if(fileExists(fileA))
 				writeFile(fileA, fileB);
 			else
-				{System.out.println("IO Error. Input file doesn't exist, is not a file, is not readable or output file already exists."); return;}
+				{System.out.println("IO Error. Input file doesn't exist, is not a file or is not readable."); return;}
 		}
 		else
 			System.out.println("Error. Invalid arguments provided.");
@@ -53,6 +53,12 @@ public class copyFile
 	}
 	public static void writeFile(File A, File B) throws IOException
 	{
+		if (fileExists(B))
+		{
+			System.out.printf("Overwrite output file (y/n)?\n>");
+			if (!sca.nextLine().equals("y")) return;
+			B.delete();
+		}
 		PrintWriter pwf = new PrintWriter(B);
 		Scanner fileRead = new Scanner(A);
 			while(fileRead.hasNextLine())
