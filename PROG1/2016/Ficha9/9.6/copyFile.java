@@ -1,7 +1,7 @@
 /*
  * copyFile.java
  * 
- * Copyright 2016 Mário Alexandre Lopes Liberato <gs2012@Qosmio-X70-B-10T>
+ * Copyright 2016 Mário Alexandre Lopes Liberato <mliberato@ua.pt>
  * 
  * This program is free software; you cauntitledn redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
