@@ -18,6 +18,7 @@ long maxScore; //Pontuação máxima
 long gameLoopCounter = 0;
 long tStart, tDelta;
 String scoreFilePath = System.getProperty("user.dir") + "/score.dat";
+int lives = 3;
 
 void setup() {
   size(1024, 768);
@@ -56,18 +57,19 @@ void starfield() {
     stroke( stars[i].z * 25);
     fill(stars[i].z * 25);
     ellipse( stars[i].x, stars[i].y, 5, 5);
-    if (dist(stars[i].x, stars[i].y, mouseX, mouseY) <6) curScene = 2; //Game Over
+    if (dist(stars[i].x, stars[i].y, mouseX, mouseY) <6) lives--; //Reduzir vidas
     //point( stars[i].x, stars[i].y );
     stars[i].x = stars[i].x - stars[i].z;
     if (stars[i].x < 0) { 
       stars[i] = new Star( width, random( height ), sqrt(random( 100 )));
     }
   }
+  if (lives < 0) curScene = 2; //Game Over
   tDelta = System.currentTimeMillis() - tStart;
   score += (tDelta/2000) * FPS/60; //Dá menos pontos se o frameRate for abaixo de 60, mais se acima.
   textFont(f, 20);
   fill(255,0,0);
-  text("Pontos: " + score, 10, 35);
+  text("Vidas: " + lives + "\nPontos: " + score, 10, 35);
   
 }
 
@@ -108,6 +110,7 @@ void gameOver() //Ecrã de game over
     score = 0;
     key = 0;
     gameLoopCounter = 0;
+    lives = 3;
   }
 }
 
@@ -149,14 +152,14 @@ void game(int scene)
 //Outras funções
 void dynamicBackground()
 {
-  for ( int i =0; i < STARS; i++) {
+  for ( int i = 0; i < STARS; i++) {
     strokeWeight( stars[i].z );
     stroke( stars[i].z * 25);
     fill(stars[i].z * 25);
     ellipse( stars[i].x, stars[i].y, 5, 5);
-    stars[i].x = stars[i].x - stars[i].z;
+    stars[i].x = stars[i].x + stars[i].z;
     if (stars[i].x < 0) { 
-      stars[i] = new Star( width, random( height ), sqrt(random( 100 )));
+      stars[i] = new Star( random( width ), random( height ), sqrt(random( 100 )));
     }
   }
 }
