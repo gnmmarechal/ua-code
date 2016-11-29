@@ -7,10 +7,10 @@ AudioPlayer themeA, explosionBGM;
 Star stars[];
 int STARS = 100;
 
-//Important constants
-final int FPS = 60; //Framerate
+int FPS = 60; //Framerate
 PFont f;
 //Variables
+boolean debugMode = true;
 boolean showMouse;
 int curScene = 0; //Mostra a cena que deve ser mostrada (ex. cena 0 é o menu, cena 1 o jogo)
 long score; //Pontuação
@@ -111,11 +111,25 @@ void gameOver() //Ecrã de game over
     key = 0;
     gameLoopCounter = 0;
     lives = 3;
+    explosionBGM.pause();
+    explosionBGM.rewind();
   }
 }
 
 void game(int scene)
 {
+  if(debugMode)
+  {
+    textFont(f, 15);
+    fill(0,255,0);
+    text("Debug Info:\n\nFPS: " + FPS, 30, height - 80);
+    
+    if (keyPressed && keyCode == UP)
+      FPS++;
+    else if (FPS > 1 && keyPressed && keyCode == DOWN)
+      FPS--;
+  }
+  frameRate(FPS);
   switch(scene)
   {
     case 0:
@@ -157,9 +171,9 @@ void dynamicBackground()
     stroke( stars[i].z * 25);
     fill(stars[i].z * 25);
     ellipse( stars[i].x, stars[i].y, 5, 5);
-    stars[i].x = stars[i].x + stars[i].z;
+    stars[i].x = stars[i].x - stars[i].z;
     if (stars[i].x < 0) { 
-      stars[i] = new Star( random( width ), random( height ), sqrt(random( 100 )));
+      stars[i] = new Star( width, random( height ), sqrt(random( 100 )));
     }
   }
 }
