@@ -11,6 +11,8 @@ Star stars[];
 int STARS = 100;
 
 int FPS = 60; //Framerate
+int difDelta = 30000; //Tempo entre mudanças de FPS 
+
 PFont f;
 //Variables
 boolean debugMode = true;
@@ -79,6 +81,7 @@ void starfield() {
   textFont(f, 20);
   fill(255,0,0);
   text("Vidas: " + lives + "\nPontos: " + score, 10, 35);
+  if (tDelta % difDelta == 0) increaseDifficulty();
   
 }
 
@@ -149,6 +152,7 @@ void gameOver() //Ecrã de game over
     lives = 3;
     explosionBGM.pause();
     explosionBGM.rewind();
+    FPS = 60;
   }
 }
 
@@ -174,6 +178,9 @@ void game(int scene)
       FPS++;
     else if (FPS > 1 && keyPressed && keyCode == DOWN)
       FPS--;
+    
+    if (keyPressed && keyCode == RIGHT) lives++;
+    else if (keyPressed && lives >= 0 && keyCode == LEFT) lives--;
   }
   frameRate(FPS);
   switch(scene)
@@ -224,6 +231,14 @@ void game(int scene)
 
 
 //Outras funções
+void increaseDifficulty()
+{
+  int valToIncrease = 1/3 * FPS;
+  
+  FPS += valToIncrease;
+  
+  return;
+}
 void waitMs(long ms)
 {
   long tIgnoreFinal = System.currentTimeMillis() + ms;
