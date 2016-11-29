@@ -2,7 +2,7 @@ import ddf.minim.*;
 import java.util.*;
 // para tocar file de som com biblioteca Minim
 Minim minim;
-AudioPlayer themeA, explosionSFX, ouchSFX;
+AudioPlayer themeA, explosionSFX, ouchSFX, upSFX;
 
 //Constants
 final String versionString = "Starfield 2 | 0.2 Pre-Presentation | 29112016 | gs2012@Qosmio-X70-B-10T";
@@ -47,6 +47,7 @@ void setup() {
   //Carregar outros temas e BGM/SFX
   explosionSFX = minim.loadFile("explosion.mp3");
   ouchSFX = minim.loadFile("ouch.mp3");
+  upSFX = minim.loadFile("up.mp3");
   //Carregar pontuação máxima
   loadMaxScore(scoreFilePath);
 }
@@ -76,6 +77,7 @@ void starfield() {
       ouchSFX.play();
     }
     if (!ouchSFX.isPlaying()) { ouchSFX.pause(); ouchSFX.rewind(); }
+    if (!upSFX.isPlaying()) { upSFX.pause(); upSFX.rewind();}
     //point( stars[i].x, stars[i].y );
     stars[i].x = stars[i].x - stars[i].z;
     if (stars[i].x < 0) { 
@@ -95,6 +97,7 @@ void starfield() {
     if (dist(lifeX, lifeY, mouseX, mouseY) < 7)
     {
       lives++;
+      upSFX.play();
       upOnScreen = false;
     }
     if (lifeX < 0) upOnScreen = false;
