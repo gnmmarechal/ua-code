@@ -66,7 +66,7 @@ void starfield() {
     stroke( stars[i].z * 25);
     fill(stars[i].z * 25);
     ellipse( stars[i].x, stars[i].y, 5, 5);
-    if (dist(stars[i].x, stars[i].y, mouseX, mouseY) <6) lives--; //Reduzir vidas
+    if (dist(stars[i].x, stars[i].y, mouseX, mouseY) < 7) lives--; //Reduzir vidas
     //point( stars[i].x, stars[i].y );
     stars[i].x = stars[i].x - stars[i].z;
     if (stars[i].x < 0) { 
@@ -90,7 +90,15 @@ void startMenu() //Menu principal
   text("Starfield 2\n===============\nProgramação I\n\n\nENTER: Iniciar jogo\n\nTAB: Créditos\nESC: Sair", 10, 35);
   if (keyPressed)
   {
-    if (key == ENTER) curScene = 3;
+    switch(key)
+    {
+      case ENTER:
+        curScene = 3;
+        break;
+      case TAB:
+        curScene = 4;
+        break;
+    }
   }
   return;
 }
@@ -105,11 +113,11 @@ void chooseShip() //Menu de escolher a nave
   {
     if (keyCode == RIGHT)
     {
-      if (curShip < 2) {curShip++; ignoreInput(100);}
+      if (curShip < 2) {curShip++; waitMs(100);}
     }
     if (keyCode == LEFT)
     {
-      if (!(curShip < 1)) { curShip--; ignoreInput(100);}
+      if (!(curShip < 1)) { curShip--; waitMs(100);}
     }
     if (key == ENTER) curScene = 1;
   }
@@ -144,6 +152,15 @@ void gameOver() //Ecrã de game over
   }
 }
 
+
+void creditsScreen()
+{
+  textFont(f, 40);
+  dynamicBackground();
+  fill(255,255,0);
+  text("Starfield 2\n===============\n\nCréditos:\n- Diogo Baptista nº 79405\n- Mário Liberato nº 84917\n\nClique ENTER para regressar", 10, 35);
+  if (keyPressed && key == ENTER) curScene = 0;
+}
 void game(int scene)
 {
   if (keyPressed && keyCode == ALT) {  debugMode = !debugMode;  key = 0; }
@@ -173,6 +190,9 @@ void game(int scene)
     case 3:
       showMouse = true;
       break;
+    case 4:
+      showMouse = true;
+      break;
   }
   
   if (!showMouse) noCursor();
@@ -192,6 +212,9 @@ void game(int scene)
     case 3:
       chooseShip();
       break;
+    case 4:
+      creditsScreen();
+      break;
   }
   
   key = 0;
@@ -201,7 +224,7 @@ void game(int scene)
 
 
 //Outras funções
-void ignoreInput(long ms)
+void waitMs(long ms)
 {
   long tIgnoreFinal = System.currentTimeMillis() + ms;
   while (tIgnoreFinal > System.currentTimeMillis());
