@@ -2,12 +2,11 @@ import ddf.minim.*;
 import java.util.*;
 // para tocar file de som com biblioteca Minim
 Minim minim;
-AudioPlayer song;
+AudioPlayer themeA, explosionBGM;
 
 Star stars[];
 int STARS = 100;
 
-static Scanner sca = new Scanner(System.in);
 //Important constants
 final int FPS = 60; //Framerate
 PFont f;
@@ -29,8 +28,11 @@ void setup() {
   frameRate(FPS);
   f = createFont("Arial",16,true);
   minim = new Minim(this);
-  song = minim.loadFile("start.mp3");
-  song.play();
+  themeA = minim.loadFile("themeA.mp3");
+  themeA.play();
+  themeA.loop();
+  //Carregar outros temas e BGM
+  explosionBGM = minim.loadFile("explosion.mp3");
   //Carregar pontuação máxima
   loadMaxScore(scoreFilePath);
 }
@@ -54,7 +56,7 @@ void starfield() {
     stroke( stars[i].z * 25);
     fill(stars[i].z * 25);
     ellipse( stars[i].x, stars[i].y, 5, 5);
-    if (dist(stars[i].x, stars[i].y, mouseX, mouseY) <6) curScene = 2;
+    if (dist(stars[i].x, stars[i].y, mouseX, mouseY) <6) curScene = 2; //Game Over
     //point( stars[i].x, stars[i].y );
     stars[i].x = stars[i].x - stars[i].z;
     if (stars[i].x < 0) { 
@@ -62,13 +64,18 @@ void starfield() {
     }
   }
   tDelta = System.currentTimeMillis() - tStart;
-  score += tDelta/2000;
+  score += (tDelta/2000) * FPS/60; //Dá menos pontos se o frameRate for abaixo de 60, mais se acima.
+  textFont(f, 20);
+  fill(255,0,0);
+  text("Pontos: " + score, 10, 35);
   
 }
 
 void startMenu() //Menu principal
 {
   textFont(f, 40);
+  dynamicBackground();
+  fill(255,255,0);
   text("Starfield 2\n===============\nProgramação I\n\n\nENTER: Iniciar jogo\n\nTAB: Créditos\nESC: Sair", 10, 35);
   if (keyPressed)
   {
@@ -79,6 +86,8 @@ void startMenu() //Menu principal
 
 void gameOver() //Ecrã de game over
 {
+  //BGM Explosion
+  explosionBGM.play();  
   //Calcular recorde (e guardar valores)
   if (score > maxScore) maxScore = score;
   try 
@@ -90,6 +99,8 @@ void gameOver() //Ecrã de game over
   catch (Exception e) { System.err.println("Erro: " + e.getMessage()); };
   
   textFont(f, 20);
+  dynamicBackground();
+  fill(255,255,0);
   text("Starfield 2\n===============\n\nPontuação: " + score + "\nRecorde: " + maxScore + "\nClique ENTER para voltar ao menu inicial!", 10, 35);
   if (keyPressed && key == ENTER) //Faz reset a variáveis e volta
   {
@@ -136,6 +147,19 @@ void game(int scene)
 
 
 //Outras funções
+void dynamicBackground()
+{
+  for ( int i =0; i < STARS; i++) {
+    strokeWeight( stars[i].z );
+    stroke( stars[i].z * 25);
+    fill(stars[i].z * 25);
+    ellipse( stars[i].x, stars[i].y, 5, 5);
+    stars[i].x = stars[i].x - stars[i].z;
+    if (stars[i].x < 0) { 
+      stars[i] = new Star( width, random( height ), sqrt(random( 100 )));
+    }
+  }
+}
 
 void loadMaxScore(String filePath)
 {
