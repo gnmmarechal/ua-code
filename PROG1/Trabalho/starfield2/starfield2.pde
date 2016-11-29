@@ -2,19 +2,20 @@ import ddf.minim.*;
 import java.util.*;
 // para tocar file de som com biblioteca Minim
 Minim minim;
-AudioPlayer themeA, explosionBGM;
+AudioPlayer themeA, explosionSFX, ouchSFX;
 
 //Constants
 final String versionString = "Starfield 2 | 0.2 Pre-Presentation | 29112016 | gs2012@Qosmio-X70-B-10T";
 
 Star stars[];
-int STARS = 100;
 
+int STARS = 100;
+boolean upOnScreen = false;
 int FPS = 60; //Framerate
 int difDelta = 30000; //Tempo entre mudanças de FPS 
-
 PFont f;
 //Variables
+int lifeX,lifeY;
 boolean debugMode = true;
 boolean showMouse;
 int curScene = 0; //Mostra a cena que deve ser mostrada (ex. cena 0 é o menu, cena 1 o jogo)
@@ -43,8 +44,9 @@ void setup() {
   themeA = minim.loadFile("themeA.mp3");
   themeA.play();
   themeA.loop();
-  //Carregar outros temas e BGM
-  explosionBGM = minim.loadFile("explosion.mp3");
+  //Carregar outros temas e BGM/SFX
+  explosionSFX = minim.loadFile("explosion.mp3");
+  ouchSFX = minim.loadFile("ouch.mp3");
   //Carregar pontuação máxima
   loadMaxScore(scoreFilePath);
 }
@@ -68,7 +70,12 @@ void starfield() {
     stroke( stars[i].z * 25);
     fill(stars[i].z * 25);
     ellipse( stars[i].x, stars[i].y, 5, 5);
-    if (dist(stars[i].x, stars[i].y, mouseX, mouseY) < 7) lives--; //Reduzir vidas
+    if (dist(stars[i].x, stars[i].y, mouseX, mouseY) < 7) 
+    {
+      lives--; //Reduzir vidas
+      ouchSFX.play();
+    }
+    if (!ouchSFX.isPlaying()) { ouchSFX.pause(); ouchSFX.rewind(); }
     //point( stars[i].x, stars[i].y );
     stars[i].x = stars[i].x - stars[i].z;
     if (stars[i].x < 0) { 
@@ -76,6 +83,22 @@ void starfield() {
     }
   }
   if (lives < 0) curScene = 2; //Game Over
+  
+  if (((int) random( 1, 600 ) == 6) && !upOnScreen) {upOnScreen = true; lifeX = width; lifeY = (int) random (height);}
+  
+  if (upOnScreen)
+  {
+    lifeX -= width/100; 
+    stroke(0,255,0);
+    fill(0,255,0);
+    ellipse( lifeX, lifeY, 6, 6);
+    if (dist(lifeX, lifeY, mouseX, mouseY) < 7)
+    {
+      lives++;
+      upOnScreen = false;
+    }
+    if (lifeX < 0) upOnScreen = false;
+  }
   tDelta = System.currentTimeMillis() - tStart;
   score += (tDelta/2000) * FPS/60; //Dá menos pontos se o frameRate for abaixo de 60, mais se acima.
   textFont(f, 20);
@@ -128,7 +151,7 @@ void chooseShip() //Menu de escolher a nave
 void gameOver() //Ecrã de game over
 {
   //BGM Explosion
-  explosionBGM.play();  
+  explosionSFX.play();  
   //Calcular recorde (e guardar valores)
   if (score > maxScore) maxScore = score;
   try 
@@ -150,8 +173,8 @@ void gameOver() //Ecrã de game over
     gameLoopCounter = 0;
     menuLoopCounter = 0;
     lives = 3;
-    explosionBGM.pause();
-    explosionBGM.rewind();
+    explosionSFX.pause();
+    explosionSFX.rewind();
     FPS = 60;
   }
 }
