@@ -1,4 +1,5 @@
 import ddf.minim.*;
+import java.util.*;
 // para tocar file de som com biblioteca Minim
 Minim minim;
 AudioPlayer song;
@@ -6,6 +7,7 @@ AudioPlayer song;
 Star stars[];
 int STARS = 100;
 
+static Scanner sca = new Scanner(System.in);
 //Important constants
 final int FPS = 60; //Framerate
 PFont f;
@@ -14,6 +16,9 @@ boolean showMouse;
 int curScene = 0; //Mostra a cena que deve ser mostrada (ex. cena 0 é o menu, cena 1 o jogo)
 long score; //Pontuação
 long maxScore; //Pontuação máxima
+long gameLoopCounter = 0;
+long tStart, tDelta;
+String scoreFilePath = System.getProperty("user.dir") + "/score.dat";
 
 void setup() {
   size(1024, 768);
@@ -27,6 +32,7 @@ void setup() {
   song = minim.loadFile("start.mp3");
   song.play();
   //Carregar pontuação máxima
+  loadMaxScore(scoreFilePath);
 }
 
 void draw() {
@@ -36,6 +42,8 @@ void draw() {
 }
 
 void starfield() {
+  gameLoopCounter++;
+  if (gameLoopCounter == 1) tStart = System.currentTimeMillis();
   //strokeWeight( 2 );
   // nave
   stroke(65,105,225);
@@ -53,6 +61,9 @@ void starfield() {
       stars[i] = new Star( width, random( height ), sqrt(random( 100 )));
     }
   }
+  tDelta = System.currentTimeMillis() - tStart;
+  score += tDelta/2000;
+  
 }
 
 void startMenu() //Menu principal
@@ -68,8 +79,25 @@ void startMenu() //Menu principal
 
 void gameOver() //Ecrã de game over
 {
+  //Calcular recorde (e guardar valores)
+  if (score > maxScore) maxScore = score;
+  try 
+  {
+    PrintWriter scoreOut = new PrintWriter(scoreFilePath);
+    scoreOut.println(maxScore);
+    scoreOut.close();    
+  }
+  catch (Exception e) { System.err.println("Erro: " + e.getMessage()); };
+  
   textFont(f, 20);
-  text("Starfield 2\n===============\n\nPontuação: " + score + "\nRecorde: " + maxScore, 10, 35);
+  text("Starfield 2\n===============\n\nPontuação: " + score + "\nRecorde: " + maxScore + "\nClique ENTER para voltar ao menu inicial!", 10, 35);
+  if (keyPressed && key == ENTER) //Faz reset a variáveis e volta
+  {
+    curScene = 0;
+    score = 0;
+    key = 0;
+    gameLoopCounter = 0;
+  }
 }
 
 void game(int scene)
@@ -109,7 +137,19 @@ void game(int scene)
 
 //Outras funções
 
-
+void loadMaxScore(String filePath)
+{
+  try 
+  {
+    File scoreFile = new File(filePath);
+    Scanner fileRead = new Scanner(scoreFile);
+    while (fileRead.hasNextLong())
+    {
+      maxScore = fileRead.nextLong();
+    }
+    fileRead.close();
+  } catch (Exception e) { System.err.println("Erro: " + e.getMessage());};
+}
 
 
 
