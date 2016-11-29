@@ -12,6 +12,8 @@ PFont f;
 //Variables
 boolean showMouse;
 int curScene = 0; //Mostra a cena que deve ser mostrada (ex. cena 0 é o menu, cena 1 o jogo)
+long score; //Pontuação
+long maxScore; //Pontuação máxima
 
 void setup() {
   size(1024, 768);
@@ -24,7 +26,7 @@ void setup() {
   minim = new Minim(this);
   song = minim.loadFile("start.mp3");
   song.play();
-  //
+  //Carregar pontuação máxima
 }
 
 void draw() {
@@ -36,15 +38,15 @@ void draw() {
 void starfield() {
   //strokeWeight( 2 );
   // nave
-  stroke(255,30,0);
-  fill(255,0,0);
+  stroke(65,105,225);
+  fill(65,105,225);
   ellipse(mouseX, mouseY, 30, 10);
   for ( int i =0; i < STARS; i++) {
     strokeWeight( stars[i].z );
     stroke( stars[i].z * 25);
     fill(stars[i].z * 25);
     ellipse( stars[i].x, stars[i].y, 5, 5);
-    if (dist(stars[i].x, stars[i].y, mouseX, mouseY) <6) noLoop();
+    if (dist(stars[i].x, stars[i].y, mouseX, mouseY) <6) curScene = 2;
     //point( stars[i].x, stars[i].y );
     stars[i].x = stars[i].x - stars[i].z;
     if (stars[i].x < 0) { 
@@ -55,7 +57,6 @@ void starfield() {
 
 void startMenu() //Menu principal
 {
-  showMouse = true;
   textFont(f, 40);
   text("Starfield 2\n===============\nProgramação I\n\n\nENTER: Iniciar jogo\n\nTAB: Créditos\nESC: Sair", 10, 35);
   if (keyPressed)
@@ -63,6 +64,12 @@ void startMenu() //Menu principal
     if (key == ENTER) curScene = 1;
   }
   return;
+}
+
+void gameOver() //Ecrã de game over
+{
+  textFont(f, 20);
+  text("Starfield 2\n===============\n\nPontuação: " + score + "\nRecorde: " + maxScore, 10, 35);
 }
 
 void game(int scene)
@@ -74,6 +81,9 @@ void game(int scene)
       break;
     case 1:
       showMouse = false;
+      break;
+    case 2:
+      showMouse = true;
       break;
   }
   
@@ -87,6 +97,9 @@ void game(int scene)
       break;
     case 1:
       starfield();
+      break;
+    case 2:
+      gameOver();
       break;
   }
 }
