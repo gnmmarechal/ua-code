@@ -4,6 +4,9 @@ import java.util.*;
 Minim minim;
 AudioPlayer themeA, explosionBGM;
 
+//Constants
+final String versionString = "Starfield 2 | 0.2 Pre-Presentation | 29112016 | gs2012@Qosmio-X70-B-10T";
+
 Star stars[];
 int STARS = 100;
 
@@ -15,11 +18,17 @@ boolean showMouse;
 int curScene = 0; //Mostra a cena que deve ser mostrada (ex. cena 0 é o menu, cena 1 o jogo)
 long score; //Pontuação
 long maxScore; //Pontuação máxima
-long gameLoopCounter = 0;
+long gameLoopCounter = 0, menuLoopCounter = 0;
 long tStart, tDelta;
 String scoreFilePath = System.getProperty("user.dir") + "/score.dat";
-int lives = 3;
-
+int lives = 3; //Vidas
+int curShip = 0;
+String shipName[] = { "Azul", "Vermelha", "Amarela"};
+int shipColours[][] = {
+  { 65, 105, 225 },
+  { 255, 0, 0},
+  { 255, 255, 0}
+};
 void setup() {
   size(1024, 768);
   stars = new Star[STARS];
@@ -49,8 +58,8 @@ void starfield() {
   if (gameLoopCounter == 1) tStart = System.currentTimeMillis();
   //strokeWeight( 2 );
   // nave
-  stroke(65,105,225);
-  fill(65,105,225);
+  stroke(shipColours[curShip][0], shipColours[curShip][1], shipColours[curShip][2]);
+  fill(shipColours[curShip][0], shipColours[curShip][1], shipColours[curShip][2]);
   ellipse(mouseX, mouseY, 30, 10);
   for ( int i =0; i < STARS; i++) {
     strokeWeight( stars[i].z );
@@ -81,11 +90,30 @@ void startMenu() //Menu principal
   text("Starfield 2\n===============\nProgramação I\n\n\nENTER: Iniciar jogo\n\nTAB: Créditos\nESC: Sair", 10, 35);
   if (keyPressed)
   {
-    if (key == ENTER) curScene = 1;
+    if (key == ENTER) curScene = 3;
   }
   return;
 }
 
+void chooseShip() //Menu de escolher a nave
+{
+  textFont(f, 40);
+  dynamicBackground();
+  fill(255,255,0);
+  text("Starfield 2\n===============\nEscolha a sua nave:\nENTER: Começar o jogo\n<-" + shipName[curShip] + "->", 10, 35);
+  if (keyPressed)
+  {
+    if (keyCode == RIGHT)
+    {
+      if (curShip < 2) {curShip++; ignoreInput(100);}
+    }
+    if (keyCode == LEFT)
+    {
+      if (!(curShip < 1)) { curShip--; ignoreInput(100);}
+    }
+    if (key == ENTER) curScene = 1;
+  }
+}
 void gameOver() //Ecrã de game over
 {
   //BGM Explosion
@@ -108,8 +136,8 @@ void gameOver() //Ecrã de game over
   {
     curScene = 0;
     score = 0;
-    key = 0;
     gameLoopCounter = 0;
+    menuLoopCounter = 0;
     lives = 3;
     explosionBGM.pause();
     explosionBGM.rewind();
@@ -118,11 +146,12 @@ void gameOver() //Ecrã de game over
 
 void game(int scene)
 {
+  if (keyPressed && keyCode == ALT) {  debugMode = !debugMode;  key = 0; }
   if(debugMode)
   {
     textFont(f, 15);
     fill(0,255,0);
-    text("Debug Info:\n\nFPS: " + FPS, 30, height - 80);
+    text("Debug Info:\nBuild: " + versionString + "\nFPS: " + FPS, 30, height - 80);
     
     if (keyPressed && keyCode == UP)
       FPS++;
@@ -141,6 +170,9 @@ void game(int scene)
     case 2:
       showMouse = true;
       break;
+    case 3:
+      showMouse = true;
+      break;
   }
   
   if (!showMouse) noCursor();
@@ -157,13 +189,24 @@ void game(int scene)
     case 2:
       gameOver();
       break;
+    case 3:
+      chooseShip();
+      break;
   }
+  
+  key = 0;
 }
 
 
 
 
 //Outras funções
+void ignoreInput(long ms)
+{
+  long tIgnoreFinal = System.currentTimeMillis() + ms;
+  while (tIgnoreFinal > System.currentTimeMillis());
+}
+
 void dynamicBackground()
 {
   for ( int i = 0; i < STARS; i++) {
@@ -201,5 +244,17 @@ class Star {
     this.x = x;
     this.y = y;
     this.z = z;
+  }
+}
+
+class Bullet {
+  float x, y, z, xSpeed, ySpeed;
+  Bullet( float x, float y, float z, float xSpeed, float ySpeed)
+  {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.xSpeed = xSpeed;
+    this.ySpeed = ySpeed;
   }
 }

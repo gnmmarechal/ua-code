@@ -1,13 +1,15 @@
-Live System
-Point System
+Live System - DONE
+Point System - DONE
 Difficulty changing
-Menu
-1280x720 (Or, at least, 1024x768. Maybe make it toggleable)
-Disappear mouse when playing
-GAME OVER screen
+Menu - DONE
+1280x720 (Or, at least, 1024x768. Maybe make it toggleable) - DONE
+Disappear mouse when playing - DONE
+GAME OVER screen - DONE
 Different colour ships
-Keep record score
+Keep record score - DONE
 Add exception handling to score saving/opening
-Add sound effects
-More BGM
-Dynamic background menu
+Add sound effects - WIP
+More BGM - WIP
+Dynamic background menu - DONE
+AI Ships & shooter mechanics?
+Keyboard Controls
