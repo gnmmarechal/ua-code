@@ -36,13 +36,12 @@ void setup() {
   size(1024, 768);
   stars = new Star[STARS];
   for ( int i =0; i < STARS; i++) {
-    stars[i] = new Star( random( width ), random( height ), random( 10 ));
+    stars[i] = new Star( width, random( height ), random( 10 ));
   }
   frameRate(FPS);
   f = createFont("Arial",16,true);
   minim = new Minim(this);
   themeA = minim.loadFile("themeA.mp3");
-  themeA.play();
   themeA.loop();
   //Carregar outros temas e BGM/SFX
   explosionSFX = minim.loadFile("explosion.mp3");
