@@ -5,14 +5,20 @@ Minim minim;
 AudioPlayer themeA, explosionSFX, ouchSFX, upSFX;
 
 //Constants
-final String versionString = "Starfield 2 | 0.2 Pre-Presentation | 29112016 | gs2012@Qosmio-X70-B-10T";
+final String versionString = "Starfield 2 | 0.2 Pre-Presentation | 01122016 | gs2012@Qosmio-X70-B-10T";
 
 Star stars[];
+Star menuStars[];;
 
 int STARS = 100;
-boolean upOnScreen = false;
+boolean upOnScreen = false, starsInstructionRan = false;
+int valToIncreaseDiff = 10; //Valor a incrementar nos FPS a cada 30s
+int diffDelta = 15000; //Tempo entre mudanças de FPS
+Timer diffTimer;
+
+
 int FPS = 60; //Framerate
-int difDelta = 30000; //Tempo entre mudanças de FPS 
+
 PFont f;
 //Variables
 int lifeX,lifeY;
@@ -22,7 +28,7 @@ int curScene = 0; //Mostra a cena que deve ser mostrada (ex. cena 0 é o menu, c
 long score; //Pontuação
 long maxScore; //Pontuação máxima
 long gameLoopCounter = 0, menuLoopCounter = 0;
-long tStart, tDelta;
+long tStart, tDelta, tGamma;
 String scoreFilePath = System.getProperty("user.dir") + "/score.dat";
 int lives = 3; //Vidas
 int curShip = 0;
@@ -35,9 +41,13 @@ int shipColours[][] = {
 void setup() {
   size(1024, 768);
   stars = new Star[STARS];
+  menuStars = new Star[STARS];
   for ( int i =0; i < STARS; i++) {
     stars[i] = new Star( width, random( height ), random( 10 ));
   }
+  for ( int i =0; i < STARS; i++) {
+    menuStars[i] = new Star( width, random( height ), random( 10 ));
+  }  
   frameRate(FPS);
   f = createFont("Arial",16,true);
   minim = new Minim(this);
@@ -59,7 +69,8 @@ void draw() {
 
 void starfield() {
   gameLoopCounter++;
-  if (gameLoopCounter == 1) tStart = System.currentTimeMillis();
+  if (gameLoopCounter == 1) { tStart = System.currentTimeMillis(); diffTimer = new Timer(); }
+  
   //strokeWeight( 2 );
   // nave
   stroke(shipColours[curShip][0], shipColours[curShip][1], shipColours[curShip][2]);
@@ -106,7 +117,22 @@ void starfield() {
   textFont(f, 20);
   fill(255,0,0);
   text("Vidas: " + lives + "\nPontos: " + score, 10, 35);
-  if (tDelta % difDelta == 0) increaseDifficulty();
+  
+  //Info de debug
+  if (debugMode) System.out.println("Time: " + tDelta + "ms\nFPS: " + FPS);
+  
+  //Aumentar a dificuldade a cada diffDelta/1000 segundos
+  diffTimer.schedule(new TimerTask() {
+    @Override
+    public void run() {
+      FPS += valToIncreaseDiff;
+      diffTimer.cancel();
+      diffTimer.purge();
+      diffTimer = new Timer();
+      //É feito reset ao diffTimer e re-criado a cada 30s.
+      return;
+    }
+  } , diffDelta);
   
 }
 
@@ -152,6 +178,8 @@ void chooseShip() //Menu de escolher a nave
 }
 void gameOver() //Ecrã de game over
 {
+  //Colocar as menuStars iguais às stars
+  if (!starsInstructionRan) { for (int i = 0; i < STARS; i++) menuStars[i] = stars[i]; starsInstructionRan = true; }
   //BGM Explosion
   explosionSFX.play();  
   //Calcular recorde (e guardar valores)
@@ -178,6 +206,12 @@ void gameOver() //Ecrã de game over
     explosionSFX.pause();
     explosionSFX.rewind();
     FPS = 60;
+    diffTimer.cancel();
+    diffTimer.purge();
+    for ( int i =0; i < STARS; i++) {
+      menuStars[i] = new Star( width, random( height ), random( 10 ));
+    }
+    starsInstructionRan = false;
   }
 }
 
@@ -256,14 +290,7 @@ void game(int scene)
 
 
 //Outras funções
-void increaseDifficulty()
-{
-  int valToIncrease = 1/3 * FPS;
-  
-  FPS += valToIncrease;
-  
-  return;
-}
+
 void waitMs(long ms)
 {
   long tIgnoreFinal = System.currentTimeMillis() + ms;
@@ -273,13 +300,13 @@ void waitMs(long ms)
 void dynamicBackground()
 {
   for ( int i = 0; i < STARS; i++) {
-    strokeWeight( stars[i].z );
-    stroke( stars[i].z * 25);
-    fill(stars[i].z * 25);
-    ellipse( stars[i].x, stars[i].y, 5, 5);
-    stars[i].x = stars[i].x - stars[i].z;
-    if (stars[i].x < 0) { 
-      stars[i] = new Star( width, random( height ), sqrt(random( 100 )));
+    strokeWeight( menuStars[i].z );
+    stroke( menuStars[i].z * 25);
+    fill(menuStars[i].z * 25);
+    ellipse( menuStars[i].x, menuStars[i].y, 5, 5);
+    menuStars[i].x = menuStars[i].x - menuStars[i].z;
+    if (menuStars[i].x < 0) { 
+      menuStars[i] = new Star( width, random( height ), sqrt(random( 100 )));
     }
   }
 }
