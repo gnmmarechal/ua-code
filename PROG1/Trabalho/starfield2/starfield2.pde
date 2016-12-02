@@ -479,12 +479,18 @@ int setCoords(String des, int controlType, long gameLoopCounter, int var1, int v
 }
 void resetStars()
 {
+  //Reset stars
   for ( int i = 0; i < STARS; i++) {
     stars[i] = new Star( width, random( height ), random( 10 ));
   }
+  //Reset asteroids
   for (int i = 0; i < ASTEROIDS; i++) {
     asteroids[i] = new Ship( width, random( height ), sqrt(random(10)), enemyShipSpeed[0][(int) random(0,1)], enemyShipSpeed[0][(int) random(0, 1)], 1, (int) random(20, 50));
   }
+  //Reset lifes
+  upOnScreen = false;
+  //Reset Bullets
+  bullets = new ArrayList();
 }
 void waitMs(long ms)
 {
