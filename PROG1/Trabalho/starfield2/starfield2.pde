@@ -1,5 +1,6 @@
 import ddf.minim.*;
 import java.util.*;
+
 // para tocar file de som com biblioteca Minim
 Minim minim;
 AudioPlayer themeA, explosionSFX, ouchSFX, upSFX;
@@ -7,25 +8,27 @@ AudioPlayer themeA, explosionSFX, ouchSFX, upSFX;
 //Constants
 final String versionString = "Starfield 2 | 0.3 Pos-Presentation | 02122016 | gs2012@Qosmio-X70-B-10T";
 final int res[] = { 1024, 768 };
-final int controlType = 1; //1 for Mouse, 2 for keyboard
+final int STARS = 100;
+final int OG_FPS = 60;
 
-Star stars[];
-Star menuStars[];;
+//Star variables
+Star stars[], menuStars[];;
 
-int STARS = 100;
+int controlType = 0; //1 for Mouse, 2 for keyboard
+
 boolean upOnScreen = false, starsInstructionRan = false;
+
+//Difficulty related variables
 int valToIncreaseDiff = 10; //Valor a incrementar nos FPS a cada 30s
 int diffDelta = 15000; //Tempo entre mudanças de FPS
-Timer diffTimer;
+Timer diffTimer; //Timer for difficulty
+int FPS = OG_FPS; //Framerate
 
-
-int FPS = 60; //Framerate
-final int OG_FPS = FPS;
-
+//Font variable
 PFont f;
 //Variables
-int shipSpeed[] = { 40, 40};
-int lifeX,lifeY;
+int shipSpeed[] = { 40, 40}; //Speed for the ship (keyboard controls)
+int lifeCoords[] = new int[2]; //Coordenadas para as vidas
 int shipX,shipY;
 boolean debugMode = true;
 boolean showMouse;
@@ -45,6 +48,9 @@ int shipColours[][] = {
 };
 int shipLives[] = { 3, 0, -2 }; //Dependendo da nave, o número de vidas muda
 int defaultCoords[] = { res[0]/10, res[1]/2 }; //Coordenadas por defeito (para controls de teclado)
+
+//Opções
+String controlTypeName[] = { "Rato", "Teclado" };
 
 void settings() {
   size(res[0], res[1]); //Define a resolução
@@ -113,21 +119,21 @@ void starfield() {
   }
   if (lives < 0) curScene = 2; //Game Over
   
-  if (((int) random( 1, 600 ) == 6) && !upOnScreen) {upOnScreen = true; lifeX = width; lifeY = (int) random (height);}
+  if (((int) random( 1, 600 ) == 6) && !upOnScreen) {upOnScreen = true; lifeCoords[0] = width; lifeCoords[1] = (int) random (height);}
   
   if (upOnScreen)
   {
-    lifeX -= width/100; 
+    lifeCoords[0] -= width/100; 
     stroke(0,255,0);
     fill(0,255,0);
-    ellipse( lifeX, lifeY, 6, 6);
-    if (dist(lifeX, lifeY, shipX, shipY) < 7)
+    ellipse( lifeCoords[0], lifeCoords[1], 6, 6);
+    if (dist(lifeCoords[0], lifeCoords[1], shipX, shipY) < 7)
     {
       lives++;
       upSFX.play();
       upOnScreen = false;
     }
-    if (lifeX < 0) upOnScreen = false;
+    if (lifeCoords[0] < 0) upOnScreen = false;
   }
   tDelta = System.currentTimeMillis() - tStart;
   score += (tDelta/2000) * FPS/60; //Dá menos pontos se o frameRate for abaixo de 60, mais se acima.
@@ -158,7 +164,7 @@ void startMenu() //Menu principal
   textFont(f, 40);
   dynamicBackground();
   fill(255,255,0);
-  text("Starfield 2\n===============\nProgramação I\n\n\nENTER: Iniciar jogo\n\nTAB: Créditos\nESC: Sair", 10, 35);
+  text("Starfield 2\n===============\nProgramação I\n\n\nENTER: Iniciar jogo\n\nCTRL: Opções\nTAB: Créditos\nESC: Sair", 10, 35);
   if (keyPressed)
   {
     switch(key)
@@ -166,8 +172,14 @@ void startMenu() //Menu principal
       case ENTER:
         curScene = 3;
         break;
+    }
+    switch(keyCode)
+    {
       case TAB:
         curScene = 4;
+        break;
+      case CONTROL:
+        curScene = 5;
         break;
     }
   }
@@ -241,9 +253,31 @@ void creditsScreen()
   text("Starfield 2\n===============\n\nCréditos:\n- Diogo Baptista nº 79405\n- Mário Liberato nº 84917\n\nClique ENTER para regressar", 10, 35);
   if (keyPressed && key == ENTER) curScene = 0;
 }
+
+void optionsMenu()
+{
+  textFont(f, 40);
+  dynamicBackground();
+  fill(255,255,0);
+  text("Starfield 2\n===============\n\nOpções:\n- Controlos: <-"+ controlTypeName[controlType] +"->\n\n\nClique ENTER para regressar", 10, 35);
+  if (keyPressed)
+  {
+    if (key == ENTER) curScene = 0;
+    if (keyCode == RIGHT)
+    {
+      if (controlType < 1) {controlType++; waitMs(100);}
+    }
+    if (keyCode == LEFT)
+    {
+      if ((controlType > 0)) { controlType--; waitMs(100);}
+    }
+  }  
+}
+
 void game(int scene)
 {
-  if (keyPressed && keyCode == ALT) {  debugMode = !debugMode;  key = 0; }
+  if (keyPressed && 
+  keyCode == ALT) {  debugMode = !debugMode;  key = 0; keyCode = 0;}
   if(debugMode)
   {
     textFont(f, 15);
@@ -276,6 +310,9 @@ void game(int scene)
     case 4:
       showMouse = true;
       break;
+    case 5:
+      showMouse = true;
+      break;
   }
   
   if (!showMouse) noCursor();
@@ -298,8 +335,11 @@ void game(int scene)
     case 4:
       creditsScreen();
       break;
+    case 5:
+      optionsMenu();
+      break;
   }
-  
+  keyCode = 0;
   key = 0;
 }
 
@@ -308,20 +348,19 @@ void game(int scene)
 
 //Outras funções
 
-int setCoords(String des, int controlType, long gameLoopCounter, int var1, int var2) //contolType vai de 1 ( Mouse) a 2 (Keyboard)
+int setCoords(String des, int controlType, long gameLoopCounter, int var1, int var2) //contolType vai de 0 ( Mouse) a 1 (Keyboard)
 {
-  int curX = var1, curY = var2;
   int x = var1, y = var2;
   
   if (gameLoopCounter == 1) {x = defaultCoords[0]; y = defaultCoords[1];}
   //Controls
   switch(controlType)
   {
-    case 1:
+    case 0:
       x = mouseX;
       y = mouseY;
       break;
-    case 2:
+    case 1:
       if (keyPressed && (key == 'a' || key == 'A') && x >= 0) x -= shipSpeed[0];
       if (keyPressed && (key == 'd' || key == 'D') && x <= width) x += shipSpeed[0];
       if (keyPressed && (key == 'w' || key == 'W') && y >= 0) y -= shipSpeed[1];
