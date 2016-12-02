@@ -3,7 +3,7 @@ import java.util.*;
 
 // para tocar file de som com biblioteca Minim
 Minim minim;
-AudioPlayer themeA, explosionSFX, ouchSFX, upSFX, crashSFX;
+AudioPlayer themeA, explosionSFX, ouchSFX, upSFX, crashSFX, laserSFX;
 
 //Constants
 final String versionString = "Starfield 2 | 0.3 Pos-Presentation | 02122016 | gs2012@Qosmio-X70-B-10T";
@@ -12,11 +12,15 @@ final int STARS = 50;
 final int ASTEROIDS = 5;
 final int OG_FPS = 60;
 final int pointsPerKill = 200;
+final int bulletLimit = 300;
 //Star variables
 Star stars[], menuStars[];
 
 //Ship variables
 Ship enemyShips[], asteroids[];
+
+ArrayList <Bullet> bullets;
+int bulletSpeed[] = { 5, 5 };
 
 int controlType = 0; //1 for Mouse, 2 for keyboard
 
@@ -70,6 +74,8 @@ void setup() {
   
   asteroids = new Ship[ASTEROIDS];
   
+  bullets = new ArrayList();
+  
   for ( int i = 0; i < STARS; i++) {
     stars[i] = new Star( width, random( height ), random( 10 ));
   }
@@ -90,6 +96,7 @@ void setup() {
   ouchSFX = minim.loadFile("ouch.mp3");
   upSFX = minim.loadFile("up.mp3");
   crashSFX = minim.loadFile("crashSound.mp3");
+  laserSFX = minim.loadFile("laser.mp3");
   //Carregar pontuação máxima
   loadMaxScore(scoreFilePath);
 }
@@ -134,6 +141,17 @@ void starfield() {
           asteroids[i].life--;
           crashSFX.play();
         }
+        
+        //Collision detection with bullet (laser?)
+        for (int z = 0; z < bullets.size(); z ++)
+        {
+          if (dist(asteroids[i].x, asteroids[i].y, bullets.get(z).x, bullets.get(z).y) < asteroids[i].radius)
+          {
+            asteroids[i].life--;
+            crashSFX.play();
+          }
+        }
+        
     }
       //Move ship
       asteroids[i].x -= asteroids[i].z;
@@ -161,6 +179,7 @@ void starfield() {
     if (!crashSFX.isPlaying()) { crashSFX.pause(); crashSFX.rewind(); }
     if (!ouchSFX.isPlaying()) { ouchSFX.pause(); ouchSFX.rewind(); }
     if (!upSFX.isPlaying()) { upSFX.pause(); upSFX.rewind();}
+    if (!laserSFX.isPlaying()) { laserSFX.pause(); laserSFX.rewind(); }
     //point( stars[i].x, stars[i].y );
     stars[i].x -= stars[i].z;
     if (stars[i].x < 0) { 
@@ -185,6 +204,22 @@ void starfield() {
     }
     if (lifeCoords[0] < 0) upOnScreen = false;
   }
+  
+  //Bullets
+  if (mousePressed)
+  {
+    Bullet temp = new Bullet(shipX, shipY);
+    bullets.add(temp);
+    if (!laserSFX.isPlaying()) laserSFX.play();
+  }
+  else
+  {
+    if (laserSFX.isPlaying()) { laserSFX.pause(); laserSFX.rewind(); }
+  }
+  removeBullets(bulletLimit);
+  moveAllBullets();
+  showAllBullets();
+  
   tDelta = System.currentTimeMillis() - tStart;
   score += (tDelta/2000) * FPS/60; //Dá menos pontos se o frameRate for abaixo de 60, mais se acima.
   textFont(f, 20);
@@ -206,6 +241,7 @@ void starfield() {
       return;
     }
   } , diffDelta);
+ 
   
 }
 
@@ -397,7 +433,27 @@ void game(int scene)
 
 
 //Outras funções
-
+void removeBullets(int limit)
+{
+  while(bullets.size() > limit)
+  {
+    bullets.remove(0);
+  }
+}
+void moveAllBullets()
+{
+  for(Bullet a : bullets)
+  {
+    a.move();
+  }
+}
+void showAllBullets()
+{
+  for(Bullet a : bullets)
+  {
+    a.display();
+  }
+}
 int setCoords(String des, int controlType, long gameLoopCounter, int var1, int var2) //contolType vai de 0 ( Mouse) a 1 (Keyboard)
 {
   int x = var1, y = var2;
@@ -477,14 +533,22 @@ class Star {
 }
 
 class Bullet {
-  float x, y, z, xSpeed, ySpeed;
-  Bullet( float x, float y, float z, float xSpeed, float ySpeed)
+  float x, y;
+  Bullet( float x, float y)
   {
     this.x = x;
     this.y = y;
-    this.z = z;
-    this.xSpeed = xSpeed;
-    this.ySpeed = ySpeed;
+  }
+  void move()
+  {
+    x += bulletSpeed[0];
+  }
+  void display()
+  {
+    strokeWeight(5);
+    stroke(0,255,0);
+    fill(0,255,0);
+    ellipse(x, y, 3, 3);
   }
 }
 
