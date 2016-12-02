@@ -8,11 +8,15 @@ AudioPlayer themeA, explosionSFX, ouchSFX, upSFX;
 //Constants
 final String versionString = "Starfield 2 | 0.3 Pos-Presentation | 02122016 | gs2012@Qosmio-X70-B-10T";
 final int res[] = { 1024, 768 };
-final int STARS = 100;
+final int STARS = 50;
+final int ASTEROIDS = 5;
 final int OG_FPS = 60;
-
+final int pointsPerKill = 200;
 //Star variables
-Star stars[], menuStars[];;
+Star stars[], menuStars[];
+
+//Ship variables
+Ship enemyShips[], asteroids[];
 
 int controlType = 0; //1 for Mouse, 2 for keyboard
 
@@ -28,6 +32,10 @@ int FPS = OG_FPS; //Framerate
 PFont f;
 //Variables
 int shipSpeed[] = { 40, 40}; //Speed for the ship (keyboard controls)
+int enemyShipSpeed[][] = {
+  { 10, 10 },
+  { 20, 20 }
+};
 int lifeCoords[] = new int[2]; //Coordenadas para as vidas
 int shipX,shipY;
 boolean debugMode = true;
@@ -44,7 +52,8 @@ String shipName[] = { "Azul", "Vermelha", "Amarela"};
 int shipColours[][] = {
   { 65, 105, 225 },
   { 255, 0, 0},
-  { 255, 255, 0}
+  { 255, 255, 0},
+  { 100, 80, 21}
 };
 int shipLives[] = { 3, 0, -2 }; //Dependendo da nave, o número de vidas muda
 int defaultCoords[] = { res[0]/10, res[1]/2 }; //Coordenadas por defeito (para controls de teclado)
@@ -58,12 +67,19 @@ void settings() {
 void setup() {
   stars = new Star[STARS];
   menuStars = new Star[STARS];
-  for ( int i =0; i < STARS; i++) {
+  
+  asteroids = new Ship[ASTEROIDS];
+  
+  for ( int i = 0; i < STARS; i++) {
     stars[i] = new Star( width, random( height ), random( 10 ));
   }
-  for ( int i =0; i < STARS; i++) {
+  for ( int i = 0; i < STARS; i++) {
     menuStars[i] = new Star( width, random( height ), random( 10 ));
-  }  
+  }
+  
+  for ( int i = 0; i < ASTEROIDS; i++) {
+    asteroids[i] = new Ship( width, random( height ), random( 10 ), enemyShipSpeed[0][(int) random(0, 1)], enemyShipSpeed[0][(int) random(0, 1)], 0, (int) random(20, 50));
+  }
   frameRate(FPS);
   f = createFont("Arial",16,true);
   minim = new Minim(this);
@@ -99,7 +115,38 @@ void starfield() {
   
   ellipse(shipX, shipY, 30, 10);
   
-  for ( int i =0; i < STARS; i++) {
+  //Asteroids
+  if (System.currentTimeMillis() - tStart >= 10000) //Start spawning asteroids
+  {
+    for (int i = 0; i < ASTEROIDS; i++) {
+      if (asteroids[i].life > 0)
+      {
+        stroke(shipColours[3][0], shipColours[3][1], shipColours[3][2]);
+        fill(shipColours[3][0], shipColours[3][1], shipColours[3][2]);
+        ellipse(asteroids[i].x, asteroids[i].y, asteroids[i].radius, asteroids[i].radius);
+        
+        //Collision detection
+        if (dist(asteroids[i].x, asteroids[i].y, shipX, shipY) < asteroids[i].radius)
+        {
+          lives--;
+          ouchSFX.play();
+          asteroids[i].life--;
+        }
+    }
+      //Move ship
+      asteroids[i].x -= asteroids[i].z;
+      asteroids[i].y -= random(-10, 10);
+      
+      if (asteroids[i].x < 0)
+      {
+        asteroids[i] = new Ship( width, random( height ), sqrt(random(10)), enemyShipSpeed[0][(int) random(0,1)], enemyShipSpeed[0][(int) random(0, 1)], 1, (int) random(20, 50));
+      }
+      
+      
+    }
+  }
+  
+  for ( int i = 0; i < STARS; i++) {
     strokeWeight( stars[i].z );
     stroke( stars[i].z * 25);
     fill(stars[i].z * 25);
@@ -112,7 +159,7 @@ void starfield() {
     if (!ouchSFX.isPlaying()) { ouchSFX.pause(); ouchSFX.rewind(); }
     if (!upSFX.isPlaying()) { upSFX.pause(); upSFX.rewind();}
     //point( stars[i].x, stars[i].y );
-    stars[i].x = stars[i].x - stars[i].z;
+    stars[i].x -= stars[i].z;
     if (stars[i].x < 0) { 
       stars[i] = new Star( width, random( height ), sqrt(random( 100 )));
     }
@@ -390,7 +437,7 @@ void dynamicBackground()
     stroke( menuStars[i].z * 25);
     fill(menuStars[i].z * 25);
     ellipse( menuStars[i].x, menuStars[i].y, 5, 5);
-    menuStars[i].x = menuStars[i].x - menuStars[i].z;
+    menuStars[i].x -= menuStars[i].z;
     if (menuStars[i].x < 0) { 
       menuStars[i] = new Star( width, random( height ), sqrt(random( 100 )));
     }
@@ -432,5 +479,21 @@ class Bullet {
     this.z = z;
     this.xSpeed = xSpeed;
     this.ySpeed = ySpeed;
+  }
+}
+
+class Ship {
+  float x, y, z;
+  int xSpeed, ySpeed;
+  int life, radius;
+  Ship( float x, float y, float z, int xSpeed, int ySpeed, int life, int radius)
+  {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.xSpeed = xSpeed;
+    this.ySpeed = ySpeed;
+    this.life = life;
+    this.radius = radius;
   }
 }
