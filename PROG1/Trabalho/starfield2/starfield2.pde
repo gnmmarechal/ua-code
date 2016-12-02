@@ -89,14 +89,14 @@ void setup() {
   frameRate(FPS);
   f = createFont("Arial",16,true);
   minim = new Minim(this);
-  themeA = minim.loadFile("themeA.mp3");
+  themeA = minim.loadFile("resources/sound/themeA.mp3");
   themeA.loop();
   //Carregar outros temas e BGM/SFX
-  explosionSFX = minim.loadFile("explosion.mp3");
-  ouchSFX = minim.loadFile("ouch.mp3");
-  upSFX = minim.loadFile("up.mp3");
-  crashSFX = minim.loadFile("crashSound.mp3");
-  laserSFX = minim.loadFile("laser.mp3");
+  explosionSFX = minim.loadFile("resources/sound/explosion.mp3");
+  ouchSFX = minim.loadFile("resources/sound/ouch.mp3");
+  upSFX = minim.loadFile("resources/sound/up.mp3");
+  crashSFX = minim.loadFile("resources/sound/crashSound.mp3");
+  laserSFX = minim.loadFile("resources/sound/laser.mp3");
   //Carregar pontuação máxima
   loadMaxScore(scoreFilePath);
 }
