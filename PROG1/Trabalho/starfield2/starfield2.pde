@@ -5,7 +5,9 @@ Minim minim;
 AudioPlayer themeA, explosionSFX, ouchSFX, upSFX;
 
 //Constants
-final String versionString = "Starfield 2 | 0.2 Pos-Presentation | 02122016 | gs2012@Qosmio-X70-B-10T";
+final String versionString = "Starfield 2 | 0.3 Pos-Presentation | 02122016 | gs2012@Qosmio-X70-B-10T";
+final int res[] = { 1024, 768 };
+final int controlType = 1;
 
 Star stars[];
 Star menuStars[];;
@@ -18,11 +20,13 @@ Timer diffTimer;
 
 
 int FPS = 60; //Framerate
-int OG_FPS = FPS;
+final int OG_FPS = FPS;
 
 PFont f;
 //Variables
+int shipSpeed[] = { 40, 40};
 int lifeX,lifeY;
+int shipX,shipY;
 boolean debugMode = true;
 boolean showMouse;
 int curScene = 0; //Mostra a cena que deve ser mostrada (ex. cena 0 é o menu, cena 1 o jogo)
@@ -40,10 +44,12 @@ int shipColours[][] = {
   { 255, 255, 0}
 };
 int shipLives[] = { 3, 0, -2 }; //Dependendo da nave, o número de vidas muda
+int defaultCoords[] = { res[0]/10, res[1]/2 }; //Coordenadas por defeito (para controls de teclado)
 
-
+void settings() {
+  size(res[0], res[1]); //Define a resolução
+}
 void setup() {
-  size(1024, 768);
   stars = new Star[STARS];
   menuStars = new Star[STARS];
   for ( int i =0; i < STARS; i++) {
@@ -76,16 +82,23 @@ void starfield() {
   if (gameLoopCounter == 1) { tStart = System.currentTimeMillis(); diffTimer = new Timer(); }
   
   //strokeWeight( 2 );
-  // nave
+  // Nave
   stroke(shipColours[curShip][0], shipColours[curShip][1], shipColours[curShip][2]);
   fill(shipColours[curShip][0], shipColours[curShip][1], shipColours[curShip][2]);
-  ellipse(mouseX, mouseY, 30, 10);
+  
+  //Define as coordenadas da nave
+  shipX = setCoords("x", controlType, gameLoopCounter, shipX, shipY);
+  shipY = setCoords("y", controlType, gameLoopCounter, shipX, shipY);
+  if (debugMode) System.out.println("shipX = " + shipX + "\nshipY = " + shipY);
+  
+  ellipse(shipX, shipY, 30, 10);
+  
   for ( int i =0; i < STARS; i++) {
     strokeWeight( stars[i].z );
     stroke( stars[i].z * 25);
     fill(stars[i].z * 25);
     ellipse( stars[i].x, stars[i].y, 5, 5);
-    if (dist(stars[i].x, stars[i].y, mouseX, mouseY) < 7) 
+    if (dist(stars[i].x, stars[i].y, shipX, shipY) < 7) 
     {
       lives--; //Reduzir vidas
       ouchSFX.play();
@@ -108,7 +121,7 @@ void starfield() {
     stroke(0,255,0);
     fill(0,255,0);
     ellipse( lifeX, lifeY, 6, 6);
-    if (dist(lifeX, lifeY, mouseX, mouseY) < 7)
+    if (dist(lifeX, lifeY, shipX, shipY) < 7)
     {
       lives++;
       upSFX.play();
@@ -294,6 +307,31 @@ void game(int scene)
 
 
 //Outras funções
+
+int setCoords(String des, int controlType, long gameLoopCounter, int var1, int var2) //contolType vai de 1 ( Mouse) a 2 (Keyboard)
+{
+  int curX = var1, curY = var2;
+  int x = var1, y = var2;
+  
+  if (gameLoopCounter == 1) {x = defaultCoords[0]; y = defaultCoords[1];}
+  //Controls
+  switch(controlType)
+  {
+    case 1:
+      x = mouseX;
+      y = mouseY;
+      break;
+    case 2:
+      if (keyPressed && (key == 'a' || key == 'A') && x >= 0) x -= shipSpeed[0];
+      if (keyPressed && (key == 'd' || key == 'D') && x <= width) x += shipSpeed[0];
+      if (keyPressed && (key == 'w' || key == 'W') && y >= 0) y -= shipSpeed[1];
+      if (keyPressed && (key == 's' || key == 'S') && y <= height) y += shipSpeed[1];      
+      break;
+  }
+  int ret = y;
+  if (des == "x") ret = x;
+  return ret;
+}
 void resetStars()
 {
   for ( int i =0; i < STARS; i++) {
