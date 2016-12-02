@@ -7,7 +7,7 @@ AudioPlayer themeA, explosionSFX, ouchSFX, upSFX;
 //Constants
 final String versionString = "Starfield 2 | 0.3 Pos-Presentation | 02122016 | gs2012@Qosmio-X70-B-10T";
 final int res[] = { 1024, 768 };
-final int controlType = 1;
+final int controlType = 1; //1 for Mouse, 2 for keyboard
 
 Star stars[];
 Star menuStars[];;
