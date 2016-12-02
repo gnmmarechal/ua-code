@@ -3,7 +3,7 @@ import java.util.*;
 
 // para tocar file de som com biblioteca Minim
 Minim minim;
-AudioPlayer themeA, explosionSFX, ouchSFX, upSFX;
+AudioPlayer themeA, explosionSFX, ouchSFX, upSFX, crashSFX;
 
 //Constants
 final String versionString = "Starfield 2 | 0.3 Pos-Presentation | 02122016 | gs2012@Qosmio-X70-B-10T";
@@ -89,6 +89,7 @@ void setup() {
   explosionSFX = minim.loadFile("explosion.mp3");
   ouchSFX = minim.loadFile("ouch.mp3");
   upSFX = minim.loadFile("up.mp3");
+  crashSFX = minim.loadFile("crashSound.mp3");
   //Carregar pontuação máxima
   loadMaxScore(scoreFilePath);
 }
@@ -131,6 +132,7 @@ void starfield() {
           lives--;
           ouchSFX.play();
           asteroids[i].life--;
+          crashSFX.play();
         }
     }
       //Move ship
@@ -156,6 +158,7 @@ void starfield() {
       lives--; //Reduzir vidas
       ouchSFX.play();
     }
+    if (!crashSFX.isPlaying()) { crashSFX.pause(); crashSFX.rewind(); }
     if (!ouchSFX.isPlaying()) { ouchSFX.pause(); ouchSFX.rewind(); }
     if (!upSFX.isPlaying()) { upSFX.pause(); upSFX.rewind();}
     //point( stars[i].x, stars[i].y );
@@ -420,9 +423,12 @@ int setCoords(String des, int controlType, long gameLoopCounter, int var1, int v
 }
 void resetStars()
 {
-  for ( int i =0; i < STARS; i++) {
+  for ( int i = 0; i < STARS; i++) {
     stars[i] = new Star( width, random( height ), random( 10 ));
-  }   
+  }
+  for (int i = 0; i < ASTEROIDS; i++) {
+    asteroids[i] = new Ship( width, random( height ), sqrt(random(10)), enemyShipSpeed[0][(int) random(0,1)], enemyShipSpeed[0][(int) random(0, 1)], 1, (int) random(20, 50));
+  }
 }
 void waitMs(long ms)
 {
