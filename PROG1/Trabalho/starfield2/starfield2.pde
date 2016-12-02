@@ -5,7 +5,7 @@ Minim minim;
 AudioPlayer themeA, explosionSFX, ouchSFX, upSFX;
 
 //Constants
-final String versionString = "Starfield 2 | 0.2 Pre-Presentation | 01122016 | gs2012@Qosmio-X70-B-10T";
+final String versionString = "Starfield 2 | 0.2 Pos-Presentation | 02122016 | gs2012@Qosmio-X70-B-10T";
 
 Star stars[];
 Star menuStars[];;
@@ -18,6 +18,7 @@ Timer diffTimer;
 
 
 int FPS = 60; //Framerate
+int OG_FPS = FPS;
 
 PFont f;
 //Variables
@@ -28,7 +29,7 @@ int curScene = 0; //Mostra a cena que deve ser mostrada (ex. cena 0 é o menu, c
 long score; //Pontuação
 long maxScore; //Pontuação máxima
 long gameLoopCounter = 0, menuLoopCounter = 0;
-long tStart, tDelta, tGamma;
+long tStart, tDelta;
 String scoreFilePath = System.getProperty("user.dir") + "/score.dat";
 int lives = 3; //Vidas
 int curShip = 0;
@@ -38,6 +39,9 @@ int shipColours[][] = {
   { 255, 0, 0},
   { 255, 255, 0}
 };
+int shipLives[] = { 3, 0, -2 }; //Dependendo da nave, o número de vidas muda
+
+
 void setup() {
   size(1024, 768);
   stars = new Star[STARS];
@@ -162,7 +166,7 @@ void chooseShip() //Menu de escolher a nave
   textFont(f, 40);
   dynamicBackground();
   fill(255,255,0);
-  text("Starfield 2\n===============\nEscolha a sua nave:\nENTER: Começar o jogo\n<-" + shipName[curShip] + "->", 10, 35);
+  text("Starfield 2\n===============\nEscolha a sua nave:\nENTER: Começar o jogo\n<-" + shipName[curShip] + "->\n\nEstatísticas:\nVidas Extra:" + shipLives[curShip], 10, 35);
   if (keyPressed)
   {
     if (keyCode == RIGHT)
@@ -173,7 +177,7 @@ void chooseShip() //Menu de escolher a nave
     {
       if (!(curShip < 1)) { curShip--; waitMs(100);}
     }
-    if (key == ENTER) curScene = 1;
+    if (key == ENTER) { lives += shipLives[curShip]; resetStars(); curScene = 1; }
   }
 }
 void gameOver() //Ecrã de game over
@@ -205,12 +209,12 @@ void gameOver() //Ecrã de game over
     lives = 3;
     explosionSFX.pause();
     explosionSFX.rewind();
-    FPS = 60;
+    FPS = OG_FPS;
     diffTimer.cancel();
     diffTimer.purge();
-    for ( int i =0; i < STARS; i++) {
+    /*for ( int i =0; i < STARS; i++) {
       menuStars[i] = new Star( width, random( height ), random( 10 ));
-    }
+    } */  
     starsInstructionRan = false;
   }
 }
@@ -290,7 +294,12 @@ void game(int scene)
 
 
 //Outras funções
-
+void resetStars()
+{
+  for ( int i =0; i < STARS; i++) {
+    stars[i] = new Star( width, random( height ), random( 10 ));
+  }   
+}
 void waitMs(long ms)
 {
   long tIgnoreFinal = System.currentTimeMillis() + ms;
