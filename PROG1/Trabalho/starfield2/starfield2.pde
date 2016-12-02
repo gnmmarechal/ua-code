@@ -126,7 +126,7 @@ void starfield() {
         fill(shipColours[3][0], shipColours[3][1], shipColours[3][2]);
         ellipse(asteroids[i].x, asteroids[i].y, asteroids[i].radius, asteroids[i].radius);
         
-        //Collision detection
+        //Collision detection with ship
         if (dist(asteroids[i].x, asteroids[i].y, shipX, shipY) < asteroids[i].radius)
         {
           lives--;
