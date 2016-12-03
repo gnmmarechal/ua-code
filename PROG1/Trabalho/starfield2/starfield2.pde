@@ -41,7 +41,7 @@ int enemyShipSpeed[][] = {
   { 20, 20 }
 };
 int lifeCoords[] = new int[2]; //Coordenadas para as vidas
-int shipX,shipY;
+int shipCoords[] = new int[2]; //Coordenadas da nave
 boolean debugMode = true;
 boolean showMouse;
 int curScene = 0; //Mostra a cena que deve ser mostrada (ex. cena 0 é o menu, cena 1 o jogo)
@@ -111,17 +111,8 @@ void starfield() {
   gameLoopCounter++;
   if (gameLoopCounter == 1) { tStart = System.currentTimeMillis(); diffTimer = new Timer(); }
   
-  //strokeWeight( 2 );
   // Nave
-  stroke(shipColours[curShip][0], shipColours[curShip][1], shipColours[curShip][2]);
-  fill(shipColours[curShip][0], shipColours[curShip][1], shipColours[curShip][2]);
-  
-  //Define as coordenadas da nave
-  shipX = setCoords("x", controlType, gameLoopCounter, shipX, shipY);
-  shipY = setCoords("y", controlType, gameLoopCounter, shipX, shipY);
-  if (debugMode) System.out.println("shipX = " + shipX + "\nshipY = " + shipY);
-  
-  ellipse(shipX, shipY, 30, 10);
+  shipCoords = drawShip(shipCoords);
   
   //Asteroids
   if (System.currentTimeMillis() - tStart >= 10000) //Start spawning asteroids
@@ -134,7 +125,7 @@ void starfield() {
         ellipse(asteroids[i].x, asteroids[i].y, asteroids[i].radius, asteroids[i].radius);
         
         //Collision detection with ship
-        if (dist(asteroids[i].x, asteroids[i].y, shipX, shipY) < asteroids[i].radius)
+        if (dist(asteroids[i].x, asteroids[i].y, shipCoords[0], shipCoords[1]) < asteroids[i].radius)
         {
           lives--;
           ouchSFX.play();
@@ -171,7 +162,7 @@ void starfield() {
     stroke( stars[i].z * 25);
     fill(stars[i].z * 25);
     ellipse( stars[i].x, stars[i].y, 5, 5);
-    if (dist(stars[i].x, stars[i].y, shipX, shipY) < 7) 
+    if (dist(stars[i].x, stars[i].y, shipCoords[0], shipCoords[1]) < 7) 
     {
       lives--; //Reduzir vidas
       ouchSFX.play();
@@ -196,7 +187,7 @@ void starfield() {
     stroke(0,255,0);
     fill(0,255,0);
     ellipse( lifeCoords[0], lifeCoords[1], 6, 6);
-    if (dist(lifeCoords[0], lifeCoords[1], shipX, shipY) < 7)
+    if (dist(lifeCoords[0], lifeCoords[1], shipCoords[0], shipCoords[1]) < 7)
     {
       lives++;
       upSFX.play();
@@ -208,7 +199,7 @@ void starfield() {
   //Bullets
   if (mousePressed)
   {
-    Bullet temp = new Bullet(shipX, shipY);
+    Bullet temp = new Bullet(shipCoords[0] + 30, shipCoords[1]);
     bullets.add(temp);
     if (!laserSFX.isPlaying()) laserSFX.play();
   }
@@ -432,6 +423,23 @@ void game(int scene)
 
 
 //Outras funções
+int[] drawShip(int coords[])
+{
+
+  strokeWeight(10);
+  stroke(shipColours[curShip][0], shipColours[curShip][1], shipColours[curShip][2]);
+  fill(shipColours[curShip][0], shipColours[curShip][1], shipColours[curShip][2]);
+  
+  //Define as coordenadas da nave
+  coords[0] = setCoords("x", controlType, gameLoopCounter, coords[0], coords[1]);
+  coords[1] = setCoords("y", controlType, gameLoopCounter, coords[0], coords[1]); 
+  if (debugMode) System.out.println("shipX = " + coords[0] + "\nshipY = " + coords[1]);
+  
+  //ellipse(coords[0], coords[1], 30, 10);
+  triangle(coords[0] - 15, coords[1] - 5, coords[0] - 15, coords[1] + 5, coords[0] , coords[1]);
+  
+  return coords;
+}
 void removeBullets(int limit)
 {
   while(bullets.size() > limit)
@@ -456,7 +464,6 @@ void showAllBullets()
 int setCoords(String des, int controlType, long gameLoopCounter, int var1, int var2) //contolType vai de 0 ( Mouse) a 1 (Keyboard)
 {
   int x = var1, y = var2;
-  boolean posControl[] = new boolean[4];
   if (gameLoopCounter == 1) {x = defaultCoords[0]; y = defaultCoords[1];}
   //Controls
   switch(controlType)
