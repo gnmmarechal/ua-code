@@ -456,7 +456,7 @@ void showAllBullets()
 int setCoords(String des, int controlType, long gameLoopCounter, int var1, int var2) //contolType vai de 0 ( Mouse) a 1 (Keyboard)
 {
   int x = var1, y = var2;
-  
+  boolean posControl[] = new boolean[4];
   if (gameLoopCounter == 1) {x = defaultCoords[0]; y = defaultCoords[1];}
   //Controls
   switch(controlType)
@@ -466,12 +466,17 @@ int setCoords(String des, int controlType, long gameLoopCounter, int var1, int v
       y = mouseY;
       break;
     case 1:
-      if (keyPressed && (key == 'a' || key == 'A') && x >= 0) x -= shipSpeed[0];
-      if (keyPressed && (key == 'd' || key == 'D') && x <= width) x += shipSpeed[0];
-      if (keyPressed && (key == 'w' || key == 'W') && y >= 0) y -= shipSpeed[1];
-      if (keyPressed && (key == 's' || key == 'S') && y <= height) y += shipSpeed[1];      
+      if (keyPressed)
+      {
+        if ((key == 'a' || key == 'A') && x >= 0) x -= shipSpeed[0];
+        if ((key == 'd' || key == 'D') && x <= width) x += shipSpeed[0];
+        if ((key == 'w' || key == 'W') && y >= 0) y -= shipSpeed[1];
+        if ((key == 's' || key == 'S') && y <= height) y += shipSpeed[1]; 
+      }
       break;
   }
+  //Take action
+  
   int ret = y;
   if (des == "x") ret = x;
   return ret;
