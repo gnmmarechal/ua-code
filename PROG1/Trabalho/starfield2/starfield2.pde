@@ -288,7 +288,7 @@ void chooseShip() //Menu de escolher a nave
     {
       if (!(curShip < 1)) { curShip--; waitMs(100);}
     }
-    if (key == ENTER) { lives += shipLives[curShip]; resetStars(); curScene = 1; }
+    if (key == ENTER) {  if (debugMode) System.out.println("Vidas: " + lives + " + " + shipLives[curShip]);lives += shipLives[curShip]; resetStars(); curScene = 1; }
   }
 }
 void gameOver() //Ecrã de game over
@@ -362,21 +362,20 @@ void optionsMenu()
 
 void game(int scene)
 {
-  if (keyPressed && 
-  keyCode == ALT) {  debugMode = !debugMode;  key = 0; keyCode = 0;}
+  if (keyPressed && (key == 'B' || key == 'b') ) {  debugMode = !debugMode;  key = 0; keyCode = 0;}
   if(debugMode)
   {
     textFont(f, 15);
     fill(0,255,0);
     text("Debug Info:\nBuild: " + versionString + "\nFPS: " + FPS, 30, height - 80);
     
-    if (keyPressed && keyCode == UP)
+    if (keyPressed && (key == 'l' || key == 'L'))
       FPS++;
-    else if (FPS > 1 && keyPressed && keyCode == DOWN)
+    else if (FPS > 1 && keyPressed && (key == 'k' || key == 'K'))
       FPS--;
     
-    if (keyPressed && keyCode == RIGHT) lives++;
-    else if (keyPressed && lives >= 0 && keyCode == LEFT) lives--;
+    if (keyPressed && (key == 'm' || key == 'M')) lives++;
+    else if (keyPressed && lives >= 0 && (key == 'n' || key == 'N')) lives--;
   }
   frameRate(FPS);
   switch(scene)
