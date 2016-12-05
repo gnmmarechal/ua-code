@@ -249,15 +249,15 @@ void startMenu() //Menu principal
   {
     switch(key)
     {
+      case TAB:
+        curScene = 4;
+        break;
       case ENTER:
         curScene = 3;
         break;
     }
     switch(keyCode)
     {
-      case TAB:
-        curScene = 4;
-        break;
       case CONTROL:
         curScene = 5;
         break;
