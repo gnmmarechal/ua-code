@@ -9,7 +9,7 @@ AudioPlayer themeA, explosionSFX, ouchSFX, upSFX, crashSFX, laserSFX;
 final String versionString = "Starfield 2 | 0.3 Pos-Presentation | 02122016 | gs2012@Qosmio-X70-B-10T";
 final int res[] = { 1024, 768 };
 final int STARS = 50;
-final int ASTEROIDS = 5;
+final int ASTEROIDS = 10;
 final int OG_FPS = 60;
 final int pointsPerKill = 200;
 final int bulletLimit = 300;
@@ -18,7 +18,7 @@ Star stars[], menuStars[];
 
 //Ship variables
 Ship enemyShips[], asteroids[];
-
+int killedAsteroids = 0;
 Triangle shipTriangle;
 
 
@@ -141,17 +141,26 @@ void starfield() {
         //Collision detection with bullet (laser?)
         for (int z = 0; z < bullets.size(); z ++)
         {
-          if (dist(asteroids[i].x, asteroids[i].y, bullets.get(z).x, bullets.get(z).y) < asteroids[i].radius)
+          if ((dist(asteroids[i].x, asteroids[i].y, bullets.get(z).x, bullets.get(z).y) < asteroids[i].radius) && bullets.get(z).exists) 
           {
             asteroids[i].life--;
+            bullets.get(z).exists = false;
             crashSFX.play();
+            //
+            killedAsteroids++;
+            score += pointsPerKill;
+            if (killedAsteroids >= 10)
+            {
+              killedAsteroids = 0;
+              lives += 2;
+            }
           }
         }
         
     }
       //Move ship
       asteroids[i].x -= asteroids[i].z;
-      asteroids[i].y -= random(-10, 10);
+      asteroids[i].y -= random(-5, 5);
       
       if (asteroids[i].x < 0)
       {
@@ -204,7 +213,7 @@ void starfield() {
   //Bullets
   if (mousePressed || (keyPressed && (key == 'O' || key == 'o' )))
   {
-    Bullet temp = new Bullet(shipCoords[0] + 30, shipCoords[1]);
+    Bullet temp = new Bullet(shipCoords[0] + 30, shipCoords[1], true);
     bullets.add(temp);
     if (!laserSFX.isPlaying()) laserSFX.play();
   }
@@ -484,7 +493,7 @@ void showAllBullets()
 {
   for(Bullet a : bullets)
   {
-    a.display();
+    if (a.exists) a.display();
   }
 }
 int setCoords(String des, int controlType, long gameLoopCounter, int var1, int var2) //contolType vai de 0 ( Mouse) a 1 (Keyboard)
@@ -528,6 +537,8 @@ void resetStars()
   upOnScreen = false;
   //Reset Bullets
   bullets = new ArrayList();
+  //Reset stuff
+  killedAsteroids = 0;
 }
 void waitMs(long ms)
 {
@@ -577,10 +588,12 @@ class Star {
 
 class Bullet {
   float x, y;
-  Bullet( float x, float y)
+  boolean exists;
+  Bullet( float x, float y, boolean exists)
   {
     this.x = x;
     this.y = y;
+    this.exists = exists;
   }
   void move()
   {
