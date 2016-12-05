@@ -23,7 +23,7 @@ Triangle shipTriangle;
 
 
 ArrayList <Bullet> bullets;
-int bulletSpeed[] = { 5, 5 };
+int bulletSpeed[] = { 10, 10 };
 
 int controlType = 0; //1 for Mouse, 2 for keyboard
 
@@ -41,7 +41,9 @@ PFont f;
 int shipSpeed[] = { 40, 40}; //Speed for the ship (keyboard controls)
 int enemyShipSpeed[][] = {
   { 10, 10 },
-  { 20, 20 }
+  { 20, 20 },
+  { 25, 25 },
+  { 90, 35 }
 };
 int lifeCoords[] = new int[2]; //Coordenadas para as vidas
 int shipCoords[] = new int[2]; //Coordenadas da nave
@@ -87,7 +89,7 @@ void setup() {
   }
   
   for ( int i = 0; i < ASTEROIDS; i++) {
-    asteroids[i] = new Ship( width, random( height ), random( 10 ), enemyShipSpeed[0][(int) random(0, 1)], enemyShipSpeed[0][(int) random(0, 1)], 0, (int) random(20, 50));
+    asteroids[i] = new Ship( width, random( height ), random( 10 ), enemyShipSpeed[(int) random(0, 3)][0], enemyShipSpeed[(int) random(0, 3)][1], 0, (int) random(20, 50));
   }
   frameRate(FPS);
   f = createFont("Arial",16,true);
@@ -153,7 +155,7 @@ void starfield() {
       
       if (asteroids[i].x < 0)
       {
-        asteroids[i] = new Ship( width, random( height ), sqrt(random(10)), enemyShipSpeed[0][(int) random(0,1)], enemyShipSpeed[0][(int) random(0, 1)], 1, (int) random(20, 50));
+        asteroids[i] = new Ship( width, random( height ), sqrt(random(10)), enemyShipSpeed[(int) random(0, 3)][0], enemyShipSpeed[(int) random(0, 3)][1], 1, (int) random(20, 50));
       }
       
       
@@ -200,7 +202,7 @@ void starfield() {
   }
   
   //Bullets
-  if (mousePressed)
+  if (mousePressed || (keyPressed && (key == 'O' || key == 'o' )))
   {
     Bullet temp = new Bullet(shipCoords[0] + 30, shipCoords[1]);
     bullets.add(temp);
@@ -520,7 +522,7 @@ void resetStars()
   }
   //Reset asteroids
   for (int i = 0; i < ASTEROIDS; i++) {
-    asteroids[i] = new Ship( width, random( height ), sqrt(random(10)), enemyShipSpeed[0][(int) random(0,1)], enemyShipSpeed[0][(int) random(0, 1)], 1, (int) random(20, 50));
+    asteroids[i] = new Ship( width, random( height ), sqrt(random(10)), enemyShipSpeed[(int) random(0,3)][0], enemyShipSpeed[(int) random(0, 3)][1], 1, (int) random(20, 50));
   }
   //Reset lifes
   upOnScreen = false;
