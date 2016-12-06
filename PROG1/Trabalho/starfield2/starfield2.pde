@@ -160,7 +160,7 @@ void starfield() {
     }
       //Move ship
       asteroids[i].x -= asteroids[i].z;
-      asteroids[i].y -= random(-5, 5);
+      asteroids[i].y -= random(-1, 1);
       
       if (asteroids[i].x < 0)
       {
