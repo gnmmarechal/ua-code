@@ -130,7 +130,8 @@ void starfield() {
         ellipse(asteroids[i].x, asteroids[i].y, asteroids[i].radius, asteroids[i].radius);
         
         //Collision detection with ship
-        if (dist(asteroids[i].x, asteroids[i].y, shipCoords[0], shipCoords[1]) < asteroids[i].radius)
+        //if (dist(asteroids[i].x, asteroids[i].y, shipCoords[0], shipCoords[1]) < asteroids[i].radius)
+        if (checkCollisionWithCircle(shipTriangle, (int) asteroids[i].x, (int) asteroids[i].y, asteroids[i].radius))
         {
           lives--;
           ouchSFX.play();
@@ -141,7 +142,8 @@ void starfield() {
         //Collision detection with bullet (laser?)
         for (int z = 0; z < bullets.size(); z ++)
         {
-          if ((dist(asteroids[i].x, asteroids[i].y, bullets.get(z).x, bullets.get(z).y) < asteroids[i].radius) && bullets.get(z).exists) 
+          //Aqui é usada esta expressão pois a função de colisão que eu criei é ineficiente, e aqui a colisão é entre círculos, logo esta chega.
+          if ((dist(asteroids[i].x, asteroids[i].y, bullets.get(z).x, bullets.get(z).y) < asteroids[i].radius) && bullets.get(z).exists)
           {
             asteroids[i].life--;
             bullets.get(z).exists = false;
@@ -176,7 +178,8 @@ void starfield() {
     stroke( stars[i].z * 25);
     fill(stars[i].z * 25);
     ellipse( stars[i].x, stars[i].y, 5, 5);
-    if (dist(stars[i].x, stars[i].y, shipCoords[0], shipCoords[1]) < 7) 
+    //if (dist(stars[i].x, stars[i].y, shipCoords[0], shipCoords[1]) < 7)
+    if (checkCollisionWithCircle(shipTriangle, (int) stars[i].x, (int) stars[i].y, 7))
     {
       lives--; //Reduzir vidas
       ouchSFX.play();
@@ -437,7 +440,22 @@ void game(int scene)
 
 
 //Outras funções
-boolean checkCollision(float x, float y, Triangle t) {
+boolean checkCollisionWithCircle(Triangle t, int circleX, int circleY, int radius)
+{
+  //(x-a)^2 + (y-b)^2 = r^2
+  //x(t) = r cos(t) + j
+  //y(t) = r sin(t) + k
+  
+  for (int i = 0; i<360; i++)
+  {
+    int curX = (int) (radius * cos((float) Math.toRadians(i))) + circleX;
+    int curY = (int) (radius * sin((float) Math.toRadians(i))) + circleY;
+    if (checkCollisionWithPoint(curX, curY, t)) return true;
+  }
+  
+  return false;
+}
+boolean checkCollisionWithPoint(float x, float y, Triangle t) {
   float tArea,t1Area,t2Area,t3Area;
   tArea  = triangleArea(t.point1x, t.point1y, t.point3x, t.point3y, t.point2x, t.point2y);
   t1Area = triangleArea(x,y, t.point2x, t.point2y, t.point3x, t.point3y);
@@ -557,91 +575,5 @@ void dynamicBackground()
     if (menuStars[i].x < 0) { 
       menuStars[i] = new Star( width, random( height ), sqrt(random( 100 )));
     }
-  }
-}
-
-void loadMaxScore(String filePath)
-{
-  try 
-  {
-    File scoreFile = new File(filePath);
-    Scanner fileRead = new Scanner(scoreFile);
-    while (fileRead.hasNextLong())
-    {
-      maxScore = fileRead.nextLong();
-    }
-    fileRead.close();
-  } catch (Exception e) { System.err.println("Erro: " + e.getMessage());};
-}
-
-
-
-
-class Star {
-  float x, y, z;
-  Star( float x, float y, float z ) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-  }
-}
-
-class Bullet {
-  float x, y;
-  boolean exists;
-  Bullet( float x, float y, boolean exists)
-  {
-    this.x = x;
-    this.y = y;
-    this.exists = exists;
-  }
-  void move()
-  {
-    x += bulletSpeed[0];
-  }
-  void display()
-  {
-    strokeWeight(5);
-    stroke(0,255,0);
-    fill(0,255,0);
-    ellipse(x, y, 3, 3);
-  }
-}
-
-class Ship {
-  float x, y, z;
-  int xSpeed, ySpeed;
-  int life, radius;
-  Ship( float x, float y, float z, int xSpeed, int ySpeed, int life, int radius)
-  {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    this.xSpeed = xSpeed;
-    this.ySpeed = ySpeed;
-    this.life = life;
-    this.radius = radius;
-  }
-}
-
-class Triangle {
-  float point1x;
-  float point1y;
-  float point2x;
-  float point2y;
-  float point3x;
-  float point3y;
-  
-  Triangle(float point1x,float point1y,float point2x,float point2y,float point3x,float point3y){
-  this.point1x = point1x;
-  this.point1y = point1y;
-  this.point2x = point2x;
-  this.point2y = point2y;
-  this.point3x = point3x;
-  this.point3y = point3y;        
-  }
-  
-  void drawTriangle() {
-    triangle(point1x, point1y, point2x, point2y, point3x, point3y);
   }
 }
