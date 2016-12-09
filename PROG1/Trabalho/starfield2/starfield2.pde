@@ -4,6 +4,7 @@ import java.util.*;
 // para tocar file de som com biblioteca Minim
 Minim minim;
 AudioPlayer themeA, explosionSFX, ouchSFX, upSFX, crashSFX, laserSFX;
+PImage splash;
 
 //Constants
 final String versionString = "Starfield 2 | 0.3 Pos-Presentation | 06122016 | gs2012@Qosmio-X70-B-10T";
@@ -54,11 +55,12 @@ int lifeCoords[] = new int[2]; //Coordenadas para as vidas
 int shipCoords[] = new int[2]; //Coordenadas da nave
 boolean debugMode = true;
 boolean showMouse;
-int curScene = 0; //Mostra a cena que deve ser mostrada (ex. cena 0 é o menu, cena 1 o jogo)
+int curScene = 6; //Mostra a cena que deve ser mostrada (ex. cena 0 é o menu, cena 1 o jogo, etc.)
 long score; //Pontuação
 long maxScore; //Pontuação máxima
 long gameLoopCounter = 0, menuLoopCounter = 0;
-long tStart, tDelta;
+long tStart, tDelta, splashStart;
+int splashLoop = 0;
 String scoreFilePath = System.getProperty("user.dir") + "/score.dat";
 int lives = 3; //Vidas
 int curShip = 0;
@@ -107,6 +109,9 @@ void setup() {
   upSFX = minim.loadFile("resources/sound/up.mp3");
   crashSFX = minim.loadFile("resources/sound/crashSound.mp3");
   laserSFX = minim.loadFile("resources/sound/laser.mp3");
+  //Carregar imagens
+  splash = loadImage("resources/img/splash.png");
+  
   //Carregar pontuação máxima
   loadMaxScore(scoreFilePath);
 }
@@ -410,6 +415,9 @@ void game(int scene)
     case 5:
       showMouse = true;
       break;
+    case 6:
+      showMouse = false;
+      break;
   }
   
   if (!showMouse) noCursor();
@@ -434,6 +442,9 @@ void game(int scene)
       break;
     case 5:
       optionsMenu();
+      break;
+    case 6:
+      splashScreen();
       break;
   }
   keyCode = 0;
