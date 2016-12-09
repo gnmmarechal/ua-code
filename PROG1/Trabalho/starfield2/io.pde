@@ -11,3 +11,14 @@ void loadMaxScore(String filePath)
     fileRead.close();
   } catch (Exception e) { System.err.println("Erro: " + e.getMessage());};
 }
+
+void writeMaxScore(String filePath, long points)
+{
+  try 
+  {
+    PrintWriter scoreOut = new PrintWriter(filePath);
+    scoreOut.println(points);
+    scoreOut.close();    
+  }
+  catch (Exception e) { System.err.println("Erro: " + e.getMessage()); };  
+}

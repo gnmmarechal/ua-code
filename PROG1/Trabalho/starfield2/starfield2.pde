@@ -314,15 +314,11 @@ void gameOver() //Ecrã de game over
   //BGM Explosion
   explosionSFX.play();  
   //Calcular recorde (e guardar valores)
-  if (score > maxScore) maxScore = score;
-  try 
+  if (score > maxScore) 
   {
-    PrintWriter scoreOut = new PrintWriter(scoreFilePath);
-    scoreOut.println(maxScore);
-    scoreOut.close();    
+    maxScore = score;
+    writeMaxScore(scoreFilePath, maxScore);
   }
-  catch (Exception e) { System.err.println("Erro: " + e.getMessage()); };
-  
   textFont(f, 20);
   dynamicBackground();
   fill(255,255,0);
