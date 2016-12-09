@@ -6,10 +6,10 @@ Minim minim;
 AudioPlayer themeA, explosionSFX, ouchSFX, upSFX, crashSFX, laserSFX;
 
 //Constants
-final String versionString = "Starfield 2 | 0.3 Pos-Presentation | 02122016 | gs2012@Qosmio-X70-B-10T";
+final String versionString = "Starfield 2 | 0.3 Pos-Presentation | 06122016 | gs2012@Qosmio-X70-B-10T";
 final int res[] = { 1024, 768 };
 final int STARS = 50;
-final int ASTEROIDS = 10;
+final int ASTEROIDS = 14;
 final int OG_FPS = 60;
 final int pointsPerKill = 200;
 final int bulletLimit = 300;
@@ -24,6 +24,11 @@ Triangle shipTriangle;
 
 ArrayList <Bullet> bullets;
 int bulletSpeed[] = { 10, 10 };
+
+//Enemy bullets and ship?
+ArrayList <Bullet> enemyBullets;
+int enemyBulletSpeed[] = { -10, -10 };
+double maxEnemyFireRate = 0.8;
 
 int controlType = 0; //1 for Mouse, 2 for keyboard
 
@@ -82,10 +87,10 @@ void setup() {
   bullets = new ArrayList();
   
   for ( int i = 0; i < STARS; i++) {
-    stars[i] = new Star( width, random( height ), random( 10 ));
+    stars[i] = new Star( random(width), random( height ), random( 10 ));
   }
   for ( int i = 0; i < STARS; i++) {
-    menuStars[i] = new Star( width, random( height ), random( 10 ));
+    menuStars[i] = new Star( random(width), random( height ), random( 10 ));
   }
   
   for ( int i = 0; i < ASTEROIDS; i++) {
@@ -203,8 +208,9 @@ void starfield() {
     lifeCoords[0] -= width/100; 
     stroke(0,255,0);
     fill(0,255,0);
+    strokeWeight(4);
     ellipse( lifeCoords[0], lifeCoords[1], 6, 6);
-    if (dist(lifeCoords[0], lifeCoords[1], shipCoords[0], shipCoords[1]) < 7)
+    if (dist(lifeCoords[0], lifeCoords[1], shipCoords[0], shipCoords[1]) < 10)
     {
       lives++;
       upSFX.play();
@@ -291,10 +297,12 @@ void chooseShip() //Menu de escolher a nave
     if (keyCode == RIGHT)
     {
       if (curShip < 2) {curShip++; waitMs(100);}
+      else { curShip = 0; waitMs(100); }
     }
     if (keyCode == LEFT)
     {
       if (!(curShip < 1)) { curShip--; waitMs(100);}
+      else { curShip = 2; waitMs(100); }
     }
     if (key == ENTER) {  if (debugMode) System.out.println("Vidas: " + lives + " + " + shipLives[curShip]);lives += shipLives[curShip]; resetStars(); curScene = 1; }
   }
