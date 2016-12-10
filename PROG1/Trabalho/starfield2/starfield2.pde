@@ -1,5 +1,6 @@
 import ddf.minim.*;
 import java.util.*;
+import static javax.swing.JOptionPane.*;
 
 // para tocar file de som com biblioteca Minim
 Minim minim;
@@ -7,7 +8,7 @@ AudioPlayer themeA, explosionSFX, ouchSFX, upSFX, crashSFX, laserSFX;
 PImage splash;
 
 //Constants
-final String versionString = "Starfield 2 | 0.3 Pos-Presentation | 06122016 | gs2012@Qosmio-X70-B-10T";
+final String versionString = "Starfield 2 | 0.5 Pre-Submission | 10122016 | gs2012@Qosmio-X70-B-10T";
 final int res[] = { 1024, 768 };
 final int STARS = 50;
 final int ASTEROIDS = 14;
@@ -61,7 +62,7 @@ long maxScore; //Pontuação máxima
 long gameLoopCounter = 0, menuLoopCounter = 0;
 long tStart, tDelta, splashStart;
 int splashLoop = 0;
-String scoreFilePath = System.getProperty("user.dir") + "/score.dat";
+String scoreFilePath = System.getProperty("user.dir") + "/scoreboard.dat";
 int lives = 3; //Vidas
 int curShip = 0;
 String shipName[] = { "Azul", "Vermelha", "Amarela"};
@@ -152,7 +153,6 @@ void starfield() {
         //Collision detection with bullet (laser?)
         for (int z = 0; z < bullets.size(); z ++)
         {
-          //Aqui é usada esta expressão pois a função de colisão que eu criei é ineficiente, e aqui a colisão é entre círculos, logo esta chega.
           if ((dist(asteroids[i].x, asteroids[i].y, bullets.get(z).x, bullets.get(z).y) < asteroids[i].radius) && bullets.get(z).exists)
           {
             asteroids[i].life--;
@@ -213,9 +213,10 @@ void starfield() {
     lifeCoords[0] -= width/100; 
     stroke(0,255,0);
     fill(0,255,0);
-    strokeWeight(4);
+    strokeWeight(6);
     ellipse( lifeCoords[0], lifeCoords[1], 6, 6);
-    if (dist(lifeCoords[0], lifeCoords[1], shipCoords[0], shipCoords[1]) < 10)
+    //if (dist(lifeCoords[0], lifeCoords[1], shipCoords[0], shipCoords[1]) < 9)
+    if ((checkCollisionWithCircle(shipTriangle, (int) lifeCoords[0], (int) lifeCoords[1], 9)))
     {
       lives++;
       upSFX.play();
