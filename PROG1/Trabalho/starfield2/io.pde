@@ -22,3 +22,17 @@ void writeMaxScore(String filePath, long points) //Escreve o score no ficheiro (
   }
   catch (Exception e) { showMessageDialog(null, "Erro: " + e.getMessage()); System.err.println("Erro: " + e.getMessage());};  
 }
+
+void generateFile(String filePath) //Gera um ficheiro em branco com os scores
+{
+  try 
+  {
+    PrintWriter scoreOut = new PrintWriter(filePath);
+    for (int i = 0; i < 5; i++)
+    {
+      scoreOut.println(0);
+    }
+    scoreOut.close();    
+  }
+  catch (Exception e) { showMessageDialog(null, "Erro: " + e.getMessage()); System.err.println("Erro: " + e.getMessage());};    
+}

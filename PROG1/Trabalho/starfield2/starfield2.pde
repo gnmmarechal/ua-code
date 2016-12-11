@@ -82,6 +82,14 @@ void settings() {
   size(res[0], res[1]); //Define a resolução
 }
 void setup() {
+  //Gerar ficheiro de score a zeros se não existir
+  File scrFile = new File(scoreFilePath);
+  if (!scrFile.exists())
+  {
+    generateFile(scoreFilePath);
+  }
+  
+  //Setup
   stars = new Star[STARS];
   menuStars = new Star[STARS];
   
