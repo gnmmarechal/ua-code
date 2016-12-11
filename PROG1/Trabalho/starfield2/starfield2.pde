@@ -34,7 +34,7 @@ double maxEnemyFireRate = 0.8;
 
 int controlType = 0; //1 for Mouse, 2 for keyboard
 
-boolean upOnScreen = false, starsInstructionRan = false;
+boolean upOnScreen = false, starsInstructionRan = false, recordSaved = false;;
 
 //Difficulty related variables
 int valToIncreaseDiff = 10; //Valor a incrementar nos FPS a cada 30s
@@ -59,6 +59,7 @@ boolean showMouse;
 int curScene = 6; //Mostra a cena que deve ser mostrada (ex. cena 0 é o menu, cena 1 o jogo, etc.)
 long score; //Pontuação
 long maxScore; //Pontuação máxima
+long[] maxScoreArray = new long[5]; // Array da pontuação máxima
 long gameLoopCounter = 0, menuLoopCounter = 0;
 long tStart, tDelta, splashStart;
 int splashLoop = 0;
@@ -122,7 +123,8 @@ void setup() {
   splash = loadImage("resources/img/splash.png");
   
   //Carregar pontuação máxima
-  loadMaxScore(scoreFilePath);
+  //loadMaxScore(scoreFilePath);
+  maxScoreArray = readScores(scoreFilePath);
 }
 
 void draw() {
@@ -278,7 +280,7 @@ void startMenu() //Menu principal
   textFont(f, 40);
   dynamicBackground();
   fill(255,255,0);
-  text("Starfield 2\n===============\nProgramação I\n\n\nRecorde: " + maxScore + " pontos \n\nENTER: Iniciar jogo\n\nCTRL: Opções\nTAB: Créditos\nESC: Sair", 10, 35);
+  text("Starfield 2\n===============\nProgramação I\n\n\nRecorde: " + maxScoreArray[0] + " pontos \n\nENTER: Iniciar jogo\n\nCTRL: Opções\nTAB: Créditos\nESC: Sair", 10, 35);
   if (keyPressed)
   {
     switch(key)
@@ -297,6 +299,7 @@ void startMenu() //Menu principal
         break;
     }
   }
+  checkMouseMenu();
   return;
 }
 
@@ -328,10 +331,19 @@ void gameOver() //Ecrã de game over
   //BGM Explosion
   explosionSFX.play();  
   //Calcular recorde (e guardar valores)
+  /*
   if (score > maxScore) 
   {
     maxScore = score;
     writeMaxScore(scoreFilePath, maxScore);
+  }
+  */
+  if (isRecord(score, maxScoreArray) && !recordSaved)
+  {
+    int newRecordIndex = recordIndex(score, maxScoreArray);
+    maxScoreArray = generateRecordArray(score, maxScoreArray, newRecordIndex);
+    writeScores(scoreFilePath, maxScoreArray);
+    recordSaved = true;
   }
   textFont(f, 20);
   dynamicBackground();
@@ -353,6 +365,7 @@ void gameOver() //Ecrã de game over
       menuStars[i] = new Star( width, random( height ), random( 10 ));
     } */  
     starsInstructionRan = false;
+    recordSaved = false;
   }
 }
 
