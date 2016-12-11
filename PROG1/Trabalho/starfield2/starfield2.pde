@@ -280,7 +280,12 @@ void startMenu() //Menu principal
   textFont(f, 40);
   dynamicBackground();
   fill(255,255,0);
-  text("Starfield 2\n===============\nProgramação I\n\n\nRecorde: " + maxScoreArray[0] + " pontos \n\nENTER: Iniciar jogo\n\nCTRL: Opções\nTAB: Créditos\nESC: Sair", 10, 35);
+  text("Starfield 2\n===============\nProgramação I\n\n\n\nENTER: Iniciar jogo\n\nCTRL: Opções\nTAB: Créditos\nESC: Sair", 10, 35);
+  text("\n\n\n\n\n\n                                         Recordes:\n", 10, 35);
+  for (int i = 0; i < 5; i++)
+  {
+    text("\n\n\n\n\n\n                                          " + (i+1) + ": " + maxScoreArray[i] + " pontos", 10, 70 + (35*i));
+  }
   if (keyPressed)
   {
     switch(key)
