@@ -8,7 +8,7 @@ AudioPlayer themeA, explosionSFX, ouchSFX, upSFX, crashSFX, laserSFX;
 PImage splash;
 
 //Constants
-final String versionString = "Starfield 2 | 0.5 Pre-Submission | 10122016 | gs2012@Qosmio-X70-B-10T";
+final String versionString = "Starfield 2 | 0.5 Submission Edition | 11122016 | gs2012@Qosmio-X70-B-10T";
 final int res[] = { 1024, 768 };
 final int STARS = 50;
 final int ASTEROIDS = 14;
@@ -54,7 +54,7 @@ int enemyShipSpeed[][] = {
 };
 int lifeCoords[] = new int[2]; //Coordenadas para as vidas
 int shipCoords[] = new int[2]; //Coordenadas da nave
-boolean debugMode = true;
+boolean debugMode = false;
 boolean showMouse;
 int curScene = 6; //Mostra a cena que deve ser mostrada (ex. cena 0 é o menu, cena 1 o jogo, etc.)
 long score; //Pontuação
