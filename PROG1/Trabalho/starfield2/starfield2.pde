@@ -270,7 +270,7 @@ void startMenu() //Menu principal
   textFont(f, 40);
   dynamicBackground();
   fill(255,255,0);
-  text("Starfield 2\n===============\nProgramação I\n\n\nENTER: Iniciar jogo\n\nCTRL: Opções\nTAB: Créditos\nESC: Sair", 10, 35);
+  text("Starfield 2\n===============\nProgramação I\n\n\nRecorde: " + maxScore + " pontos \n\nENTER: Iniciar jogo\n\nCTRL: Opções\nTAB: Créditos\nESC: Sair", 10, 35);
   if (keyPressed)
   {
     switch(key)
