@@ -1,28 +1,3 @@
-void loadMaxScore(String filePath) //Carrega apenas o score do topo
-{
-  try 
-  {
-    File scoreFile = new File(filePath);
-    Scanner fileRead = new Scanner(scoreFile);
-    while (fileRead.hasNextLong())
-    {
-      maxScore = fileRead.nextLong();
-    }
-    fileRead.close();
-  } catch (Exception e) { showMessageDialog(null, "Erro: " + e.getMessage()); System.err.println("Erro: " + e.getMessage());};
-}
-
-void writeMaxScore(String filePath, long points) //Escreve o score no ficheiro (apenas um score)
-{
-  try 
-  {
-    PrintWriter scoreOut = new PrintWriter(filePath);
-    scoreOut.println(points);
-    scoreOut.close();    
-  }
-  catch (Exception e) { showMessageDialog(null, "Erro: " + e.getMessage()); System.err.println("Erro: " + e.getMessage());};  
-}
-
 void generateFile(String filePath) //Gera um ficheiro em branco com os scores
 {
   try 
@@ -68,12 +43,11 @@ void writeScores(String filePath, long[] points) //Esta função escreve os scor
 
 boolean isRecord(long points, long[] recordArray) //Esta função verifica se há um novo recorde
 {
-  for (int i = 0; i < recordArray.length; i++)
-  {
-    if (points > recordArray[i])
-      return true;
-  }
-  return false;
+  if (recordIndex(points, recordArray) == -1 )
+    return false;
+  else
+    return true;
+    
 }
 
 int recordIndex(long points, long[] recordArray) //Esta função verifica o índice onde colocar o novo recorde
